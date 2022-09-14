@@ -59,8 +59,10 @@ To be continued
 
 ## Packaging and Deployment
 
-To be continued
+Packaging is done on a per-component basis, each component folder containing
+all the technical elements required to display and run it (custom labels, Apex classes...).
 
+To be continued
 
 * * *
 
