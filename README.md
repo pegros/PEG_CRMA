@@ -31,7 +31,7 @@ It takes a list elements as input and enables to display it as bars:
 
 The component is displayed hereafter in the red rectangle, Campaigns being grouped here by RecordType and
 coloured by Status.
-![sfpegPlanningCmp in action](/media/sfpegPlanningCmp.jpg)
+![sfpegPlanningCmp in action](/media/sfpegPlanningCmp.png)
 
 The component is highly dynamic, in terms of axis sizing, scrollbar activation...
 It leverages the latest `D3.js` library to automatically display the bars and time axis.
