@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DisplayActions__c</fullName>
+    <description>Configuration of the actions displayed in the component (main one + data preparation forms)</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Configuration of the actions displayed in the component (main one + data preparation forms)</inlineHelpText>
+    <label>Display Actions</label>
+    <length>100000</length>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>

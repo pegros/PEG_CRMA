@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FilterClass__c</fullName>
+    <defaultValue>&apos;sfpegMassActionSoqlDml_SVC&apos;</defaultValue>
+    <description>Name of the Apex Class implementing the Filter logic</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Name of the Apex Class implementing the Filter logic</inlineHelpText>
+    <label>Filter Class</label>
+    <length>50</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

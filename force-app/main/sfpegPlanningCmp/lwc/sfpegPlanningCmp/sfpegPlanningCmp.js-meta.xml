@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>SF PEG Planning</masterLabel>
+    <description>This component provides a planning display widget for CRM Analytics Dashboards.</description>
+
+    <targets>
+        <target>analytics__Dashboard</target>
+    </targets>
+
+    <targetConfigs>
+        <targetConfig targets="analytics__Dashboard">
+            <hasStep>true</hasStep>
+
+            <property   name="title"            type="String"
+                        label="Title" />
+            <property   name="titleAlign"       type="String"
+                        label="Title Alignment"
+                        description="Possible values are: left, center, right"
+                        datasource="left,center,right"
+                        default="center"/>
+            <property   name="titleSize"        type="Integer"
+                        label="Title Font Size"
+                        description="Size in px"
+                        default="13"/>
+
+            <property   name="xAxisScale"       type="String"
+                        label="X-Axis Scale"
+                        datasource="Auto,month,day,hour"
+                        description="Scale applied"
+                        default="Auto"/>
+            <property   name="yAxisSize"        type="Integer"
+                        label="Y-Axis Size"
+                        description="Size of the left section containing the group and element labels, as 1/N of the display width"
+                        default="4"/>
+
+            <property   name="showLegend"       type="Boolean"
+                        label="Show Legend?"
+                        default="false" />
+            <property   name="isDebug"       type="Boolean"
+                        label="Set Debug?"
+                        default="false" />
+
+            <property   name="dsGroup"          type="Dimension"
+                        label="Grouping"        description="Dimension used to group elements (optional)"
+                        required="false" />
+            <property   name="dsLabel"          type="Dimension"
+                        label="Element"         description="Dimension used as element Label"
+                        required="true" />
+            <property   name="dsCategory"       type="Dimension"
+                        label="Category"        description="Dimension used for Colouring (optional)"
+                        required="false" />
+            <property   name="dsColor"          type="Dimension"
+                        label="Category Color"  description="Dimension providing the Category Colour to apply (optional)"
+                        required="false" />
+            <property   name="dsStart"          type="Dimension"
+                        label="Start"           description="Date/Time used as Element Start"
+                        required="true" />
+            <property   name="dsEnd"            type="Dimension"
+                        label="End"             description="Date/Time used as Element End"
+                        required="true" />
+
+            <property   name="dummy"            type="String"
+                        label="Space"           description="dummy workaround" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

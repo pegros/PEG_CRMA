@@ -1,0 +1,171 @@
+.rootContainer {
+    /*background: pink;*/
+    width: 100%;
+    height: 100%;
+    /*padding: 10px;*/
+}
+
+.titleContainer {
+    /*background: white;*/
+    padding: var(--lwc-spacingXSmall);
+}
+
+.planningContainer {
+    /*margin: var(--lwc-spacingXxSmall);*/
+    /*background: lightblue;*/
+    /*padding: 10px;*/
+    max-height: var(--planningHeight);
+}
+
+.axisContainer {
+    position: sticky;
+    left:0;
+    background: white;
+    /*padding-bottom: 10px;*/
+    height: 100%;
+    z-index: 20;
+    padding-left: var(--lwc-spacingXSmall);
+    cursor: default;
+}
+.groupItem {
+    /*background: lightcyan;*/
+    padding-right: var(--lwc-spacingXSmall);
+    /*padding-right: var(--lwc-spacingXxSmall);*/
+    height: 25px;
+    line-height: 25px;
+    border-top: 1px solid grey;
+}
+.groupItem:first-child {
+    border-top:none;
+}
+.groupItem:first-child + .groupElements {
+    border-top:none;
+}
+.groupElements {
+    /*background: lightgoldenrodyellow;*/
+    /*padding-bottom: 10px;*/
+    border-top: 1px solid grey;
+}
+.elementItem {
+    /*background: skyblue;*/
+    padding-right: var(--lwc-spacingXSmall);
+    height: 25px;
+    line-height: 25px;
+}
+.elementItem {
+    /*background: skyblue;*/
+    padding-right: var(--lwc-spacingXSmall);
+    height: 26px;
+    line-height: 25px;
+}
+.elementItem:first-child {
+    height: 25px !important;
+}
+.axisSpace {
+    /*background: lightcoral;*/
+    height: 25px;
+}
+
+
+.mainContainer {
+    /*background: lightgrey;*/
+    /*margin-right: var(--lwc-spacingSmall);*/
+    height: 100%;
+}
+.mainSvg {
+    background: white;
+    margin-right: var(--lwc-spacingSmall);
+    margin-left: var(--lwc-spacingXSmall);
+}
+.elementBar {
+    /*fill: "blue";*/
+    height: 20;
+    z-index: 5;
+    cursor: pointer;
+}
+.mainGrid {
+    color: white;
+    stroke: white;
+}
+.mainGrid .tick {
+    stroke: grey !important;
+    color: grey !important;
+    opacity: 0.5;
+    z-index: 0;
+    shape-rendering: crispEdges;
+}
+/*.mainGrid path {
+    display: none;
+    stroke: white;
+    color: white;
+}
+.mainGrid .tick line {
+    stroke: grey !important;
+    color: grey !important;
+    opacity: 0.5;
+    shape-rendering: crispEdges;
+}*/
+.timeAxis {
+    background: white;
+    opacity: 75%;
+    position:sticky;
+    bottom:0;
+    margin-right: var(--lwc-spacingSmall);
+    margin-left: var(--lwc-spacingXSmall);
+}
+.axisGrid {
+    font-size: 13px !important;
+    font-family: var(--lwc-fontFamily) !important;
+    color: blue !important;
+    stroke: blue !important;
+}
+/*.axisGrid .tick line {
+    display: none !important;
+    stroke: white !important;
+}
+.axisGrid path {
+    display: none !important;
+    stroke: white !important;
+}
+.axisGrid .tick text {
+    font-size: 13px !important;
+    font-family: var(--lwc-fontFamily) !important;
+    color: orange;
+}*/
+
+.legendContainer {
+    /*background: darkgreen;*/
+    /*width: 090%;*/
+    /*padding: 10px;*/
+    display: flex;
+    padding-bottom: var(--lwc-spacingXxSmall);
+    /*align-items: center;
+    justify-content: center;*/
+}
+.legendItem {
+    /*background: lightgreen;*/
+    padding: var(--lwc-spacingXSmall);
+    display: inline-block;
+    /*margin-right: 10px;*/
+    white-space: nowrap;
+    cursor: default;
+}
+.itemCircle {
+    background-color: var(--circleColor);
+    padding: var(--lwc-spacingXxSmall);
+    height: var(--lwc-spacingXSmall);
+    width: var(--lwc-spacingXSmall);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: var(--lwc-spacingXxSmall);;
+}
+
+.elementPopup {
+    background: var(--lwc-colorBackgroundAltInverse);
+    color: white;
+    padding: 10px;
+    position: absolute;
+    min-width: 200px;
+    max-width: 350px;
+    z-index: 50;
+}

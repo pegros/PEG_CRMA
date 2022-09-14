@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <classAccesses>
+        <apexClass>sfpegMassActionSoqlDml_SVC</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>sfpegMassAction_SVC</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>sfpegMassAction_CTL</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>sfpegMassAction__mdt</name>
+    </customMetadataTypeAccesses>
+    <description>Permission Set providing access rights to all metadata required to use the SFPEG MassAction Component</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>sfpegMassActionUsage</label>
+</PermissionSet>

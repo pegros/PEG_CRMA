@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>55.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>SF PEG Mass Action</masterLabel>
+    <description>This component enables to support a mass action directly within a CRM Analytics Dashboard.</description>
+
+    <targets>
+        <target>analytics__Dashboard</target>
+    </targets>
+
+    <targetConfigs>
+        <targetConfig targets="analytics__Dashboard">
+            <hasStep>true</hasStep>
+            <property   name="title"            type="String"
+                        label="Title"
+                        description="Component Title"
+                        required="true" />
+            <property   name="titleSize"        type="Integer"
+                        label="Title Font Size"
+                        description="Size in px"
+                        default="13"/>
+            <property   name="configName"       type="String"
+                        label="Configuration"
+                        description="Developer Name of the sfpegMassAction metadata record providing the detailed configuration."
+                        required="false" />
+            <property   name="keyField"         type="Dimension"
+                        label="Key Field"       description="Data Field used as Key record identifier"
+                        required="true" />
+            <property   name="isDebug"      type="Boolean"
+                        label="Show Debug?" description="Flag to activate debug information"
+                        default="false" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,260 @@
+<template>
+    <div class="rootContainer">
+        <div class="headerContainer slds-clearfix slds-p-right_x-large">
+
+            <!-- Component Header -->
+            <div class="slds-media slds-media_center headerMedia">
+                <div class="slds-media__body slds-p-left_small slds-p-vertical_xx-small">
+                    <p style={titleStyle}>{cmpTitle}</p>
+                </div>
+                <div if:true={isReady} class="slds-media__figure slds-media__figure_reverse slds-p-vertical_x-small" >
+                    <template if:false={initError}>
+                        <lightning-button-group if:true={configDetails.display.header}>
+                            <template for:each={configDetails.display.header} for:item="iterAction">
+                                <lightning-button   label={iterAction.label}
+                                                    value={iterAction}
+                                                    key={iterAction.name}
+                                                    class="headerButton"
+                                                    onclick={handleHeaderAction}></lightning-button>
+                            </template>
+                        </lightning-button-group>
+                        <lightning-button-group>
+                            <lightning-button       label={configDetails.action.label}
+                                                    class="headerButton"
+                                                    variant="brand"
+                                                    onclick={handleMainAction}></lightning-button>
+                            <lightning-button-icon  icon-name="utility:undo"
+                                                    alt="Undo all"
+                                                    title="Undo all"
+                                                    class="headerButton"
+                                                    variant="border-filled"
+                                                    onclick={handleReset}></lightning-button-icon>
+                        </lightning-button-group>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <template if:true={isReady}>
+
+            <!-- Component Init Error -->
+            <div if:true={initError} class="slds-p-horizontal_small">
+                <c-sfpeg-mass-action-message-dsp    title="Initialisation failure"
+                                                    message={initError}
+                                                    variant="error"></c-sfpeg-mass-action-message-dsp>
+            </div>
+
+            <template if:false={initError}>
+                <!-- Component Table -->
+                <div class="tableContainer" style={tableStyle} >
+                    <lightning-datatable    hide-checkbox-column={configDetails.display.options.hideCheckboxColumn}
+                                            key-field={keyField}
+                                            data={tableData}
+                                            columns={configDetails.display.columns}
+                                            column-widths-mode={configDetails.display.options.columnWidthMode} 
+                                            max-row-selection={configDetails.display.options.maxRowSelection} 
+                                            onrowselection={handleSelect}
+                                            sorted-direction={sortDirection}
+                                            sorted-by={sortedBy}
+                                            onsort={handleSort} 
+                                            render-config={renderConfig}>
+                    </lightning-datatable>
+                    <!-- default-sort-direction="asc" -->
+                    <!-- Sorting Spinner -->
+                    <lightning-spinner class="sortingSpînner slds-hide" alternative-text="Sorting..."   size="medium">
+                    </lightning-spinner>
+                </div>
+
+
+                <!-- Header Action Popup -->
+                <div class="headerActionContainer slds-hide slds-box slds-m-horizontal_x-small">
+                    <div class="actionHeader slds-p-around_x-small slds-border_bottom">
+                        <h1 class="slds-modal__title slds-align_absolute-center">{headerAction.title}</h1>
+                    </div>
+
+                    <div class="actionContent slds-p-around_medium slds-scrollable" style={actionStyle} >
+
+                        <!-- Header Action Error -->
+                        <div if:true={headerActionMessageTitle}>
+                            <c-sfpeg-mass-action-message-dsp    title={headerActionMessageTitle}
+                                                                message={headerActionMessageDetail}
+                                                                variant={headerActionMessageSeverity}
+                                                                class="slds-m-horizontal_x-small">
+                            </c-sfpeg-mass-action-message-dsp>
+                        </div>
+
+                        <!-- Header Action Message -->
+                        <p if:true={headerAction.message} class="slds-text-body slds-m-bottom_x-small" >
+                            {headerAction.message}</p>
+
+                        <!-- Header Action Content -->
+                        <template if:true={headerAction.form} >
+                            <lightning-record-edit-form object-api-name={headerAction.form.objectApiName}
+                                                        record-type-id={headerAction.form.RecordTypeId}>
+                                <lightning-messages></lightning-messages>
+                                <lightning-layout   multiple-rows="true" >
+                                    <template for:each={headerAction.form.fields} for:item="iterForm">
+                                        <lightning-layout-item  if:false={iterForm.hidden}
+                                                                key={iterForm.name}
+                                                                size={configDetails.action.form.size} >
+                                            <lightning-input-field  field-name={iterForm.name}
+                                                                    data-name={iterForm.name}
+                                                                    class="headerField"
+                                                                    required={iterForm.required}
+                                                                    disabled={iterForm.disabled}
+                                                                    value={iterForm.value} >
+                                            </lightning-input-field>
+                                        </lightning-layout-item>
+                                        <div    if:true={iterForm.hidden}
+                                                key={iterForm.name}
+                                                class="slds-hide">
+                                            <lightning-input-field  field-name={iterForm.name}
+                                                                    data-name={iterForm.name}
+                                                                    class="headerField"
+                                                                    value={iterForm.value} >
+                                            </lightning-input-field>
+                                        </div>
+                                    </template>
+                                </lightning-layout>
+                            </lightning-record-edit-form>
+                        </template>
+                    </div>
+
+                    <!-- Header Action Popup Footer -->
+                    <div class="actionfooter slds-theme_shade slds-p-around_x-small slds-border_top">
+                        <div class="slds-align_absolute-center" >
+                            <lightning-button   label="Cancel"
+                                                class="slds-m-right_small"
+                                                onclick={handleHeaderCancel}></lightning-button>
+                            <lightning-button   if:false={hasHeaderActionError}
+                                                label="Confirm"
+                                                variant="brand"
+                                                onclick={handleHeaderConfirm}></lightning-button>
+                            <lightning-button   if:true={hasHeaderActionError}
+                                                label="Confirm"
+                                                variant="brand"
+                                                disabled></lightning-button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Action Popup (slds-text-title_bold)-->
+                <div class="actionContainer slds-hide slds-box slds-m-horizontal_x-small">
+                    <div class="actionHeader slds-p-around_x-small slds-border_bottom">
+                        <h1 if:true={configDetails.action.title} class="slds-modal__title slds-align_absolute-center" >
+                            {configDetails.action.title}&nbsp;
+                            <lightning-helptext if:true={configDetails.action.message}
+                                                content={configDetails.action.message}
+                                                class="slds-m-bottom_small"></lightning-helptext>
+                        </h1>
+                        <lightning-progress-indicator   current-step={actionStep}
+                                                        type="base" variant="shaded"
+                                                        has-error={hasActionErrorWarning} >
+                            <lightning-progress-step label="Control"        value="1"></lightning-progress-step>
+                            <lightning-progress-step label="Confirmation"   value="2"></lightning-progress-step>
+                            <lightning-progress-step label="Execution"      value="3"></lightning-progress-step>
+                            <lightning-progress-step label="Completion"     value="4"></lightning-progress-step>
+                        </lightning-progress-indicator>
+                    </div>
+
+                    <div class="actionContent slds-p-around_medium slds-scrollable" style={actionStyle}>
+
+                        <!-- Main Action Message -->
+                        <!--<p if:true={configDetails.action.message} class="slds-text-body slds-m-bottom_x-small" >
+                            {configDetails.action.message}</p>-->
+
+                        <!-- Main Action Error -->
+                        <div if:true={actionMessageTitle}>
+                            <c-sfpeg-mass-action-message-dsp    title={actionMessageTitle}
+                                                                message={actionMessageDetail}
+                                                                variant={actionMessageSeverity}
+                                                                class="slds-m-horizontal_x-small"></c-sfpeg-mass-action-message-dsp>
+                        </div>
+
+                        <!-- Main Action Content -->
+                        <template if:false={hasActionError}>
+
+                            <!-- Step #1 (records control) ort Step #3 (record processing) -->
+                            <div if:true={isProgressStep}>
+                                <p class="slds-m-bottom_small">{actionProgressMessage}</p>
+                                <lightning-progress-bar value={actionProgress} size="large" title={actionProgressTitle} ></lightning-progress-bar>
+                                <!--
+                                <p class="slds-m-top_small slds-m-bottom_medium slds-text-body_small">{actionRowsRemaining.length} / {actionRows.length} record(s) remaining.</p>
+                                -->
+                            </div>
+                            <!-- Step #2 data entry and action confirmation -->
+                            <div if:true={isStep2}>
+                                <p class="slds-m-bottom_small">{actionProgressMessage}</p>
+
+                                <template if:true={configDetails.action.form}>
+                                    <!-- record-type-id={formRecord.RecordTypeId} -->
+                                    <!--<lightning-record-edit-form object-api-name={configDetails.action.form.objectApiName}
+                                                                onload={handleFormLoad}
+                                                                onsubmit={handleFormSubmit}
+                                                                onerror={handleFormError}
+                                                                onsuccess={handleFormSave} >-->
+                                    <lightning-record-edit-form object-api-name={configDetails.action.form.objectApiName}
+                                                                record-type-id={configDetails.action.form.RecordTypeId}>
+                                        <lightning-messages></lightning-messages>
+                                        <lightning-layout   multiple-rows="true" >
+                                            <template for:each={configDetails.action.form.fields} for:item="iterForm">
+                                                <lightning-layout-item  if:false={iterForm.hidden}
+                                                                        key={iterForm.name}
+                                                                        size={configDetails.action.form.size} >
+                                                    <lightning-input-field  field-name={iterForm.name}
+                                                                            data-name={iterForm.name}
+                                                                            class="mainField"
+                                                                            required={iterForm.required}
+                                                                            disabled={iterForm.disabled}
+                                                                            value={iterForm.value} >
+                                                    </lightning-input-field>
+                                                </lightning-layout-item>
+                                                <div    if:true={iterForm.hidden}
+                                                        key={iterForm.name}
+                                                        class="slds-hide">
+                                                    <lightning-input-field  field-name={iterForm.name}
+                                                                            data-name={iterForm.name}
+                                                                            class="mainField"
+                                                                            value={iterForm.value} >
+                                                    </lightning-input-field>
+                                                </div>
+                                            </template>
+                                        </lightning-layout>
+                                    </lightning-record-edit-form>
+                                </template>
+                            </div>
+                        </template>
+
+                    </div>
+
+                    <!-- Main Action Footer -->
+                    <div class="actionFooter slds-theme_shade slds-p-around_x-small slds-border_top">
+                        <div class="slds-align_absolute-center" >
+                            <lightning-button   if:true={showCancel}
+                                                label="Cancel"
+                                                class="slds-m-right_small"
+                                                onclick={handleMainCancel}></lightning-button>
+                            <lightning-button   if:true={showClose}
+                                                label="Close"
+                                                variant="brand"
+                                                class="slds-m-right_small"
+                                                onclick={handleMainCancel}></lightning-button>
+                            <lightning-button   if:true={showConfirm}
+                                                label="Confirm"
+                                                variant="brand"
+                                                onclick={handleMainConfirm}></lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </template>
+
+        <!-- Initialisation Spinner -->
+        <template if:false={isReady}>
+            <div class="slds-p-around_x-small spinnerContainer" >
+                <lightning-spinner alternative-text="Initialisation..." size="medium">
+                </lightning-spinner>
+            </div>
+        </template>
+    </div>
+</template>

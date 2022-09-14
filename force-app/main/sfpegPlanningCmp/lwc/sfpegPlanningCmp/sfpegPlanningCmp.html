@@ -1,0 +1,160 @@
+<template>
+    <div class="rootContainer">
+        <template if:true={title}>
+            <div class="titleContainer slds-clearfix">
+                <div class={titleClass} style={titleStyle} >
+                    {title}
+                    <!--<lightning-formatted-text value={title}>
+                    </lightning-formatted-text>-->
+                </div>
+            </div>
+        </template>
+
+        <!--
+        <div class="planningContainer slds-scrollable_y slds-grid">
+        -->
+        <div class="planningContainer slds-scrollable slds-grid" style={planningStyle} >
+            <!--<div class="axisContainer slds-col slds-size_1-of-4 slds-grid slds-wrap slds-grid_vertical-align-start">-->
+            <div class={axisClass}>
+                <!-- Grouped version Axis -->
+                <template if:true={dsGroup}>
+                    <template for:each={axisData} for:item="groupIter">
+                        <div key={groupIter.index} class="groupItem slds-col slds-size_1-of-2 slds-truncate" title={groupIter.label}>
+                            <!--<p class="slds-truncate" title={groupIter.label}>{groupIter.label}</p>-->
+                            {groupIter.label}
+                        </div>
+                        <div key={groupIter.indexElt} class="groupElements slds-col slds-size_1-of-2" >
+                            <template for:each={groupIter.items} for:item="elementIter">
+                                <div key={elementIter.index} class="elementItem slds-truncate" title={elementIter.label}>
+                                    {elementIter.label}
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </template>
+                <!-- Flat version Axis -->
+                <template if:false={dsGroup}>
+                    <div class="groupElements slds-col slds-size_1-of-1" >
+                        <template for:each={axisData} for:item="elementIter">
+                            <div key={elementIter.label} class="elementItem slds-truncate" title={elementIter.label}>
+                                {elementIter.label}
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <!--
+                <div class="groupItem slds-col slds-size_1-of-2" onmouseover={showPopup} onmouseout={hidePopup}>
+                    <p class="slds-truncate">Group #1</p>
+                </div>
+                <div class="groupElements slds-col slds-size_1-of-2" >
+                    <div class="elementItem">Elt #11</div>
+                </div>
+                <div class="groupItem slds-col slds-size_1-of-2">
+                    <p class="slds-truncate" onmouseover={showPopup} onmouseout={hidePopup} >Group Number #2</p>
+                </div>
+                <div class="groupElements slds-col slds-size_1-of-2">
+                    <p class="elementItem">Elt #21</p>
+                    <p class="elementItem">Elt #22</p>
+                </div>
+                <div class="groupItem slds-col slds-size_1-of-2" onmouseover={showPopup} onmouseout={hidePopup}>
+                    <p class="slds-truncate" onmouseover={showPopup} onmouseout={hidePopup}>Group #3</p>
+                </div>
+                <div class="groupElements slds-col slds-size_1-of-2">
+                    <p class="elementItem">Elt #31</p>
+                    <p class="elementItem">Elt #32</p>
+                    <p class="elementItem">Elt #33</p>
+                </div>
+                <div class="groupItem slds-col slds-size_1-of-2" onmouseover={showPopup} onmouseout={hidePopup} >
+                    <p class="slds-truncate">Group Number #4</p>
+                </div>
+                <div class="groupElements slds-col slds-size_1-of-2">
+                    <p class="elementItem">Elt #41</p>
+                    <p class="elementItem">Elt #42</p>
+                    <p class="elementItem">Elt #43</p>
+                    <p class="elementItem">Elt #44</p>
+                </div>
+                <div class="groupItem slds-col slds-size_1-of-2" onmouseover={showPopup} onmouseout={hidePopup} >
+                    <p class="slds-truncate" onmouseover={showPopup} onmouseout={hidePopup} >Group #5</p>
+                </div>
+                <div class="groupElements slds-col slds-size_1-of-2">
+                    <p class="elementItem">Elt #51</p>
+                    <p class="elementItem">Elt #52</p>
+                    <p class="elementItem">Elt #53</p>
+                    <p class="elementItem">Elt #54</p>
+                    <p class="elementItem">Elt #55</p>
+                </div>
+                -->
+                <div class="axisSpace slds-col slds-size_1-of-1"></div>
+            </div>
+            <!--<div class="mainContainer slds-col slds-size_3-of-4 slds-scrollable_x">-->
+            <!--<div class="mainContainer slds-col slds-size_3-of-4">-->
+            <div class={containerClass}>
+                <svg    xmlns="http://www.w3.org/2000/svg"
+                        class="mainSvg"
+                        width={svgWidth}
+                        height={svgHeight}>
+                        <!--lwc:dom="manual">   -->
+                        <template for:each={chartData} for:item="chartIter">
+                            <g key={chartIter.index}>
+                                <rect   class="elementBar" fill={chartIter.color}
+                                        height="18" width={chartIter.length}
+                                        x={chartIter.x} y={chartIter.y}
+                                        data-index={chartIter.index}
+                                        onmouseover={showPopup}
+                                        onmousemove={movePopup}
+                                        onmouseout={hidePopup} >
+                                </rect>
+                            </g>
+                        </template>
+
+                        <!--
+                        <g><rect class="elementBar" fill="blue" height="25" width="250" x="10" y="0"></rect></g>
+                        <g><rect class="elementBar" fill="green" height="25" width="150" x="150" y="26"></rect></g>
+                        <g><rect class="elementBar" fill="yellow" height="25" width="100" x="200" y="52"></rect></g>
+                        <g><rect class="elementBar" fill="blue" height="25" width="150" x="250" y="78"></rect></g>
+                        <g><rect class="elementBar" fill="orange" height="25" width="500" x="200" y="104"></rect></g>
+                        <g><rect class="elementBar" fill="blue" height="25" width="150" x="250" y="130"></rect></g>
+                        <g><rect class="elementBar" fill="red" height="25" width="250" x="400" y="156"></rect></g>
+                        <g><rect class="elementBar" fill="blue" height="25" width="150" x="250" y="180"></rect></g>
+                        <g><rect class="elementBar" fill="orange" height="25" width="500" x="300" y="210"></rect></g>
+                        <g><rect class="elementBar" fill="blue" height="25" width="150" x="350" y="240"></rect></g>
+                        <g><rect class="elementBar" fill="red" height="25" width="250" x="550" y="270"></rect></g>
+                        -->
+                </svg>
+                <svg    xmlns="http://www.w3.org/2000/svg"
+                        class="timeAxis"
+                        width={svgWidth}
+                        height="26" >
+                        <!--
+                        <g><rect fill="grey" height="5" width={svgWidth} x="0" y="5"></rect></g>
+                        -->
+                </svg>
+            </div>
+        </div>
+
+        <template if:true={showLegend}>
+            <div class = "legendContainer slds-scrollable_x">
+                <div class="slds-align_absolute-center" style="background:white;">
+                    <template for:each={legendData} for:item="legendIter">
+                        <div key={legendIter.label} class="legendItem slds-text-body_small">
+                            <span class="itemCircle" style={legendIter.style}></span>
+                            {legendIter.label}
+                        </div> 
+                    </template>
+                <!--
+                <div class="legendItem slds-text-body_small"><span class="itemCircle" style="--circleColor: blue;"></span>Status Value #1</div> 
+                <div class="legendItem slds-text-body_small"><span class="itemCircle" style="--circleColor: green;"></span>Status Value #2</div> 
+                <div class="legendItem slds-text-body_small"><span class="itemCircle" style="--circleColor: yellow;"></span>Status Value #3</div> 
+                <div class="legendItem slds-text-body_small"><span class="itemCircle" style="--circleColor: orange;"></span>Status Value #4</div> 
+                <div class="legendItem slds-text-body_small"><span class="itemCircle" style="--circleColor: red;"></span>Status Value #5</div> 
+                -->
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <div class="elementPopup slds-hide">
+        <p>Nom: Hello</p>
+        <p>Prénom: World</p>
+    </div>
+</template>
