@@ -56,12 +56,39 @@ public virtual class sfpegMassAction_SVC {
     * @param config         Action configuration as provided by the applicable sfpegMassAction record.
     * @param rows           List of rows to be acted upon.
     * @param context        Display context data provided by the component
-    * @return Integer       Number of rows actually processed.
+    * @return sfpegMassAction_CTL.ActionResult   Result of the row processing.
     * @exception AuraHandledException   Returned systematically by default with a warning message
     *                                   to inform that real implementation is not available.
     ***/
-    public virtual Integer executeAction(final String config, final List<SObject> rows, final Object context) {
+    public virtual List<ActionResult> executeAction(final String config, final List<SObject> rows, final Object context) {
         System.debug(LoggingLevel.ERROR,'executeAction: sfpegMassAction_SVC default implementation called.');
         throw new AuraHandledException('Mass Action Apex action execution logic not implemented!');
+    }
+
+    /***
+    * @description  Public structure to return execution results.
+    ***/
+    public class ActionResult {
+    
+        @AuraEnabled public Object  record  { get; set; }
+        @AuraEnabled public Boolean isOK    { get; set; } // status qualification of the processing
+        @AuraEnabled public String  status  { get; set; } // status value to be set on row
+        @AuraEnabled public String  icon    { get; set; } // SLDS icon to illustrate status
+        @AuraEnabled public String  color   { get; set; } // SLDS text class to colorise status 
+        @AuraEnabled public String  message { get; set; } // detailed message for status (e.g. error details)
+
+        public ActionResult(Object  record, Boolean isOK, String status, String  icon, String  color, String  message) {
+            this.record = record;
+            this.isOK = isOK;
+            this.status = status;
+            this.icon   = icon;
+            this.color   = color;
+            this.message = message;
+            System.debug('ActionResult: input message ' + message);
+            System.debug('ActionResult: stored message ' + this.message);
+        }
+        
+        public ActionResult() {
+        }
     }
 }

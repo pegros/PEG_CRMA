@@ -142,7 +142,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
     * @exception AuraHandledException   Returned systematically by default with a warning message
     *                                   to inform that real implementation is not available.
     ***/
-    public override Integer executeAction(final String config, final List<SObject> rows, final Object context) {
+    public override List<sfpegMassAction_SVC.ActionResult> executeAction(final String config, final List<SObject> rows, final Object context) {
         System.debug('executeAction: START sfpegMassActionSoqlDml_SVC implementation');
         System.debug(LoggingLevel.FINE,'executeAction: config provided ' + config);
         System.debug(LoggingLevel.FINE,'executeAction: #rows provided ' + rows?.size());
@@ -153,18 +153,34 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
         try {
             switch on config {
                 when 'insert' {
-                    insert rows;
-                    System.debug('executeAction : END rows inserted ');
-                    // System.Label.MyLabelName;
-                    // String.format(System.Label.sfpegMassActionSoqlDmlInsertMessage, new List<Object>{rows.size()});
+                    Database.SaveResult[] results = database.insert(rows, true);
+                    System.debug('executeAction : END / rows inserted (all or none) ' + results);
+                    return reworkResults(rows,results);
+                }
+                when 'insertBE' {
+                    Database.SaveResult[] results = database.insert(rows, false);
+                    System.debug('executeAction : END / inserting rows (best effort) ' + results);
+                    return reworkResults(rows,results);
                 }
                 when 'update' {
-                    update rows;
-                    System.debug('executeAction : END / rows updated');
+                    Database.SaveResult[] results = database.update(rows, true);
+                    System.debug('executeAction : END / updating rows (all or none)');
+                    return reworkResults(rows,results);
+                }
+                when 'updateBE' {
+                    Database.SaveResult[] results = database.update(rows, false);
+                    System.debug('executeAction : END / updating rows (best effort)');
+                    return reworkResults(rows,results);
                 }
                 when 'delete' {
-                    delete rows;
-                    System.debug('executeAction : END / rows deleted');
+                    List<Database.DeleteResult> results = database.delete(rows, true);
+                    System.debug('executeAction : END / rows deleted (all or none) ' + results);
+                    return reworkResults(rows,results);
+                }
+                when 'deleteBE' {
+                    List<Database.DeleteResult> results = database.delete(rows, false);
+                    System.debug('executeAction : END / deleting rows (best effort) ' + results);
+                    return reworkResults(rows,results);
                 }
                 when else {
                     System.debug(LoggingLevel.WARN, 'executeAction : unsupported DML operation ' + config);
@@ -178,6 +194,74 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
             System.debug(LoggingLevel.ERROR, 'executeAction : END KO / ' + e.getMessage());
             throw new AuraHandledException(e.getMessage());
         }
-        return rows.size();
+    }
+
+    /***
+    * @description          Private utility to rework insert results.
+    * @param rows           List of rows to be acted upon.
+    * @param results        List of insert/update operation results.
+    * @return List<Object>  Execution summary to be returned to the component.
+    ***/
+    private List<sfpegMassAction_SVC.ActionResult> reworkResults(final List<SObject> rows, final List<Database.SaveResult> results) {
+        System.debug('reworkResults: START (insert/update)');
+
+        List<sfpegMassAction_SVC.ActionResult> resultList = new List<sfpegMassAction_SVC.ActionResult>();
+        Integer index = 0;
+        for (SObject iter : rows) {
+            System.debug(LoggingLevel.FINEST,'reworkResults: processing item ' + iter);
+            Database.SaveResult iterResult = results.get(index);
+            System.debug(LoggingLevel.FINEST,'reworkResults: result fetched ' + iterResult);
+            if (iterResult.isSuccess()) {
+                iter.Id = iterResult.getId();
+                //resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success',null));
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success','OK insert/update'));
+                System.debug(LoggingLevel.FINEST,'reworkResults: success row added with Id ' + iter.Id);
+            }
+            else {
+                Database.Error[] iterErrors = iterResult.getErrors();
+                String iterMessage = (iterErrors[0]).getMessage();
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,false,'Failed','standard:incident','slds-text-color_error',iterMessage));
+                System.debug(LoggingLevel.FINEST,'reworkResults: failed row added with error ' + iterMessage);
+            }
+            index += 1;
+        }
+        System.debug(LoggingLevel.FINE,'reworkResults: resultList init ' + resultList);
+
+        System.debug('reworkResults: END with #results ' + resultList.size());
+        return resultList;
+    }
+
+    /***
+    * @description          Private utility to rework insert results.
+    * @param rows           List of rows to be acted upon.
+    * @param results        List of delete operation results.
+    * @return List<Object>  Execution summary to be returned to the component.
+    ***/
+    private List<sfpegMassAction_SVC.ActionResult> reworkResults(final List<SObject> rows, final List<Database.DeleteResult> results) {
+        System.debug('reworkResults: START (delete)');
+
+        List<sfpegMassAction_SVC.ActionResult> resultList = new List<sfpegMassAction_SVC.ActionResult>();
+        Integer index = 0;
+        for (SObject iter : rows) {
+            System.debug(LoggingLevel.FINEST,'reworkResults: processing item ' + iter);
+            Database.DeleteResult iterResult = results.get(index);
+            System.debug(LoggingLevel.FINEST,'reworkResults: result fetched ' + iterResult);
+            if (iterResult.isSuccess()) {
+                //resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success',null));
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success','OK delete'));
+                System.debug(LoggingLevel.FINEST,'reworkResults: success row added with Id ' + iter.Id);
+            }
+            else {
+                Database.Error[] iterErrors = iterResult.getErrors();
+                String iterMessage = (iterErrors[0]).getMessage();
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,false,'Failed','standard:incident','slds-text-color_error',iterMessage));
+                System.debug(LoggingLevel.FINEST,'reworkResults: failed row added with error ' + iterMessage);
+            }
+            index += 1;
+        }
+        System.debug(LoggingLevel.FINE,'reworkResults: resultList init ' + resultList);
+
+        System.debug('reworkResults: END with #results ' + resultList.size());
+        return resultList;
     }
 }

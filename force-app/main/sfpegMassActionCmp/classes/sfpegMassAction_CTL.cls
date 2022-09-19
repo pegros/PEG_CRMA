@@ -131,11 +131,11 @@ public with sharing class sfpegMassAction_CTL {
     * @param        actionName      DeveloperName of the sfpegMassAction configuration record.
     * @param        rows            List of rows to be filtered.
     * @param        context         Display context data.
-    * @return       Integer         Number of rows processed.
+    * @return       List<sfpegMassAction_SVC.ActionResult> Result of the row processing.
     * @exception    AuraHandledException    Raised if no configuration found for the provided name.
     ***/
     @AuraEnabled
-    public static Integer executeAction(final String actionName, final List<SObject> rows, final Object context) {
+    public static List<sfpegMassAction_SVC.ActionResult> executeAction(final String actionName, final List<SObject> rows, final Object context) {
         System.debug(LoggingLevel.FINE,'executeAction: START with sfpegMassAction name ' + actionName);
         System.debug(LoggingLevel.FINE,'executeAction: and #rows ' + rows.size());
 
@@ -156,9 +156,9 @@ public with sharing class sfpegMassAction_CTL {
         System.debug('executeAction: Action Apex class found with name ' + actionConfig.ActionClass__c);
         sfpegMassAction_SVC actionInstance = (sfpegMassAction_SVC) actionClass.newInstance();
 
-        Integer resultCount = actionInstance.executeAction(actionConfig.ActionConfig__c, rows, context);
-        System.debug(LoggingLevel.FINE,'executeAction: END returning ' + resultCount);
-        return resultCount;
+        List<sfpegMassAction_SVC.ActionResult> actionResults = actionInstance.executeAction(actionConfig.ActionConfig__c, rows, context);
+        System.debug(LoggingLevel.FINE,'executeAction: END returning ' + actionResults);
+        return actionResults;
     }
 
     /***

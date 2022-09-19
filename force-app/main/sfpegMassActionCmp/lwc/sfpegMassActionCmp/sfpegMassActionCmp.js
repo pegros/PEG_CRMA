@@ -130,6 +130,8 @@ export default class SfpegMassActionCmp extends LightningElement {
     @track actionMessageTitle;      // Message triggered upon action execution
     @track actionMessageDetail;     // Detailed message triggered upon action execution
     @track actionMessageSeverity;   // Action Message severity (info, warning, error)
+    @track actionCountOK;           // Number of records processed OK at last execution
+    @track actionCountKO;           // Number of records processed KO at last execution
 
     //----------------------------------------------------------------
     // Custom Getters
@@ -643,6 +645,8 @@ export default class SfpegMassActionCmp extends LightningElement {
         this.actionMessageTitle = null;
         this.actionMessageDetail = null;
         this.actionMessageSeverity = null;
+        this.actionCountOK = 0;
+        this.actionCountKO = 0;
         this.actionStep = "1";
         this.actionProgress = 0;
         if (this.isDebug) console.log('handleMainAction: action context reset');
@@ -702,6 +706,8 @@ export default class SfpegMassActionCmp extends LightningElement {
         if (this.isDebug) console.log('handleMainCancel: unselecting rows in dataTable ',dataTable);
         dataTable.selectedRows = [];
         this.selection = [];
+        if (this.isDebug) console.log('handleMainCancel: refreshing data in dataTable ',dataTable);
+        dataTable.data = this.tableData;
 
         let actionContainer = this.template.querySelector('.actionContainer');
         if (this.isDebug) console.log('handleMainCancel: hiding actionContainer');
@@ -1104,13 +1110,36 @@ export default class SfpegMassActionCmp extends LightningElement {
 
             executeAction({actionName: this.configName, rows: targetRows, context: this.context})
             .then( result => {
-                if (this.isDebug) console.log('executeAction: batch operation executed  ',result);
+                if (this.isDebug) console.log('executeAction: batch operation executed with result ',result);
                 this.actionProgress = Math.round(100 - (100 * rows.length) / this.selection.length);
-                /*batchRows.forEach(item => {
-                    item._status = 'processed';
-                    item._icon = 'standard:approval';
-                    item._color = 'slds-text-color_success';
-                });*/
+
+                batchRows.forEach((item,index) => {
+                    if (this.isDebug) console.log('executeAction: processing row ', item);
+                    let itemResult = result[index];
+                    if (this.isDebug) console.log('executeAction: result row fetched ', itemResult);
+
+                    let itemIndex = this.tableData.findIndex(itemData => itemData[this.keyField] == item[this.keyField]);
+                    if (this.isDebug) console.log('updateSelection: displayed row index fetched ',itemIndex);
+
+                    let newItem = {... this.tableData[itemIndex]};
+                    newItem._status = itemResult.status;
+                    newItem._icon = itemResult.icon;
+                    newItem._color = itemResult.color;
+                    newItem._message = itemResult.message;
+                    if (this.isDebug) console.log('updateSelection: new item initialized ',newItem);
+
+                    this.tableData.splice(itemIndex,1,newItem);
+                    if (this.isDebug) console.log('updateSelection: display row updated ');
+
+                    if (itemResult.isOK) {
+                        this.actionCountOK +=1;
+                    }
+                    else {
+                        this.actionCountKO +=1;
+                    }
+                });
+                if (this.isDebug) console.log('updateSelection: batch results processed --> #OK ',this.actionCountOK);
+                if (this.isDebug) console.log('updateSelection: batch results processed --> #KO ',this.actionCountKO);
 
                 if (rows.length > 0) {
                     if (this.isDebug) console.log('executeAction: END / triggering next batch operation');
@@ -1119,16 +1148,15 @@ export default class SfpegMassActionCmp extends LightningElement {
                 else {
                     if (this.isDebug) console.log('executeAction: END / All rows processed');
                     this.actionStep = "4";
-                    this.actionMessageTitle = 'Processing done';
-                    this.actionMessageDetail = 'All rows processed!';
+                    this.actionMessageTitle = 'All rows processed';
+                    this.actionMessageDetail = '#OK: ' + this.actionCountOK + ' / #KO: ' + this.actionCountKO ;
                     this.actionMessageSeverity = 'success';
-
                     //let dataTable = this.template.querySelector('lightning-datatable');
                     //dataTable.data = this.tableData;
                 }
             })
             .catch( error => {
-                console.warn('executeAction: END KO / configuration fetch error ',error);
+                console.warn('executeAction: END KO / action execution error ',error);
                 this.actionMessageTitle = 'Processing failure';
                 this.actionMessageDetail =  error.body.message;
                 this.actionMessageSeverity = 'error';

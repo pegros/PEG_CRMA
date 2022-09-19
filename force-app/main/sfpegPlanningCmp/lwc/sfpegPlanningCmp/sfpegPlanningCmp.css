@@ -90,8 +90,8 @@
 .mainGrid .tick {
     stroke: grey !important;
     color: grey !important;
-    opacity: 0.5;
-    z-index: 0;
+    opacity: 80%;
+    z-index: 10;
     shape-rendering: crispEdges;
 }
 /*.mainGrid path {
@@ -107,7 +107,7 @@
 }*/
 .timeAxis {
     background: white;
-    opacity: 75%;
+    opacity: 90%;
     position:sticky;
     bottom:0;
     margin-right: var(--lwc-spacingSmall);
