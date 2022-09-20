@@ -35,6 +35,7 @@ import sfpegD3              from '@salesforce/resourceUrl/sfpegD3';
 import LOCALE               from '@salesforce/i18n/locale';
 import FROM_LABEL           from '@salesforce/label/c.sfpegPlanningFromLabel';
 import TO_LABEL             from '@salesforce/label/c.sfpegPlanningToLabel';
+import NO_RESULT_MSG        from '@salesforce/label/c.sfpegPlanningNoResultsMessage';
 
 const COLOR_PALETTE = [
     '#52B7D8', '#E16032', '#FFB03B', '#54A77B', '#4FD2D2', '#E287B2', '#F39653', '#6CCE56', '#F5D73F', '#5296D9', '#EB6E83', '#A9D158'
@@ -124,6 +125,8 @@ export default class SfpegPlanningCmp extends LightningElement {
     legendWidth     =  200; // Width of the Legend SVG
     legendHeight    =  15;  // Height of the Legend SVG
 
+    noResultsMessage = NO_RESULT_MSG; // Message displayed when there are no results to display.
+
     //----------------------------------------------------------------
     // Custom getters
     //----------------------------------------------------------------  
@@ -136,6 +139,10 @@ export default class SfpegPlanningCmp extends LightningElement {
     }
     get titleStyle() {
         return "font-size:" + this.titleSize + 'px;'
+    }
+
+    get hasData() {
+        return ((this.results?.length || 0) > 0);
     }
 
     //----------------------------------------------------------------
@@ -199,7 +206,7 @@ export default class SfpegPlanningCmp extends LightningElement {
 
         let mainContainer = this.template.querySelector('.mainContainer');
         if (this.isDebug) console.log('rendered: mainContainer ',mainContainer);
-        this.containerWidth = mainContainer.offsetWidth || 0;
+        this.containerWidth = mainContainer?.offsetWidth || 0;
         if (this.isDebug) console.log('rendered: containerWidth ', this.containerWidth);
 
         if (this.isDebug) console.log('rendered: DB State fetched ', JSON.stringify(this.getState()));

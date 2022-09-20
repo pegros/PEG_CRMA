@@ -16,4 +16,12 @@
         <shortDescription>sfpegPlanningToLabel</shortDescription>
         <value>  to</value>
     </labels>
+    <labels>
+        <fullName>sfpegPlanningNoResultsMessage</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegPlanningNoResultsMessage</shortDescription>
+        <value>No results found</value>
+    </labels>
 </CustomLabels>
