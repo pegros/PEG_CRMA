@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>sfpegMassActionInitTitle</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionInitTitle</shortDescription>
+        <value>Initialising...</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionSortTitle</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionSortTitle</shortDescription>
+        <value>Sorting...</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionProcessTitle</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionProcessTitle</shortDescription>
+        <value>Processing...</value>
+    </labels>
+
+    <labels>
+        <fullName>sfpegMassActionUndoLabel</fullName>
+        <categories>PEG Component LWC CRM-Analytics Button Title</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionUndoLabel</shortDescription>
+        <value>Undo all changes</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionConfirmLabel</fullName>
+        <categories>PEG Component LWC CRM-Analytics Button Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionConfirmLabel</shortDescription>
+        <value>Confirm</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionCancelLabel</fullName>
+        <categories>PEG Component LWC CRM-Analytics Button Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionCancelLabel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionCloseLabel</fullName>
+        <categories>PEG Component LWC CRM-Analytics Button Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionCloseLabel</shortDescription>
+        <value>Close</value>
+    </labels>
+
+
+    <labels>
+        <fullName>sfpegMassActionStep1Label</fullName>
+        <categories>PEG Component LWC CRM-Analytics Step Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep1Label</shortDescription>
+        <value>Control</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep1Message</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep1Message</shortDescription>
+        <value>Analysing selected records</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep2Label</fullName>
+        <categories>PEG Component LWC CRM-Analytics Step Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep2Label</shortDescription>
+        <value>Confirm</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep2NoFormMessage</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep2NoFormMessage</shortDescription>
+        <value>After control, only {1} record(s) kept out of the {0} selected</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep2FormMessage</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep2FormMessage</shortDescription>
+        <value>After control, keeping {1} record(s) out of the {0} selected ones. Please fill in the following information before confirming.</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep3Label</fullName>
+        <categories>PEG Component LWC CRM-Analytics Step Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep3Label</shortDescription>
+        <value>Execute</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep3Message</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep3Message</shortDescription>
+        <value>Processing records</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep4Label</fullName>
+        <categories>PEG Component LWC CRM-Analytics Step Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep4Label</shortDescription>
+        <value>Complete</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep4Message</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep4Message</shortDescription>
+        <value>Action Completed</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStep4Details</fullName>
+        <categories>PEG Component LWC CRM-Analytics Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStep4Details</shortDescription>
+        <value>{0} records processed with {1} OK vs {2} KO</value>
+    </labels>
+
+
+    <labels>
+        <fullName>sfpegMassActionInitError</fullName>
+        <categories>PEG Component LWC CRM-Analytics Error Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionInitError</shortDescription>
+        <value>Initialisation Failure</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionConfigError</fullName>
+        <categories>PEG Component LWC CRM-Analytics Error Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionConfigError</shortDescription>
+        <value>Configuration Issue</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionProcessError</fullName>
+        <categories>PEG Component LWC CRM-Analytics Error Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionProcessError</shortDescription>
+        <value>Processing Failure</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionFilterAllError</fullName>
+        <categories>PEG Component LWC CRM-Analytics Error Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionFilterAllError</shortDescription>
+        <value>After control, there is no record to process out of the selected ones</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionNoSelectionError</fullName>
+        <categories>PEG Component LWC CRM-Analytics Error Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionNoSelectionError</shortDescription>
+        <value>No record has been selected for this action</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionRequiredFieldsError</fullName>
+        <categories>PEG Component LWC CRM-Analytics Error Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionRequiredFieldsError</shortDescription>
+        <value>Some required fields have not been set</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionNoPermissionError</fullName>
+        <categories>PEG Component LWC CRM-Analytics Error Message</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionNoPermissionError</shortDescription>
+        <value>Current User has not the required permission ({0}) to execute this action</value>
+    </labels>
+
+    <labels>
+        <fullName>sfpegMassActionStatusExcluded</fullName>
+        <categories>PEG Component LWC CRM-Analytics Status Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStatusExcluded</shortDescription>
+        <value>Excluded</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionIconExcluded</fullName>
+        <categories>PEG Component LWC CRM-Analytics Status Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionIconExcluded</shortDescription>
+        <value>standard:branch_merge</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStatusOK</fullName>
+        <categories>PEG Component LWC CRM-Analytics Status Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStatusOK</shortDescription>
+        <value>Processed</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionIconOK</fullName>
+        <categories>PEG Component LWC CRM-Analytics Icon</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionIconOK</shortDescription>
+        <value>standard:approval</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionStatusKO</fullName>
+        <categories>PEG Component LWC CRM-Analytics Status Label</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionStatusKO</shortDescription>
+        <value>Failed</value>
+    </labels>
+    <labels>
+        <fullName>sfpegMassActionIconKO</fullName>
+        <categories>PEG Component LWC CRM-Analytics Icon</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>sfpegMassActionIconKO</shortDescription>
+        <value>standard:incident</value>
+    </labels>
+</CustomLabels>

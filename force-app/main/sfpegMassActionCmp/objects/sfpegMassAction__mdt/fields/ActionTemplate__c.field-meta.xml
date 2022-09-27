@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ActionTemplate__c</fullName>
-    <defaultValue>&apos;{&quot;sobjectApiName&quot;:&quot;Task&quot;,&quot;subject&quot;:&quot;TEST&quot;}&apos;</defaultValue>
     <description>Configuration of the Record template to be used for rows pushed in action execution logic</description>
     <externalId>false</externalId>
     <fieldManageability>SubscriberControlled</fieldManageability>

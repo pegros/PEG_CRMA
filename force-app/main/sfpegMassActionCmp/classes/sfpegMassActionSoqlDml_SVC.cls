@@ -32,6 +32,7 @@
 * SOFTWARE.
 ***/
 
+@SuppressWarnings('PMD.ClassNamingConventions')
 public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC {
 
     /***
@@ -104,7 +105,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
             else {
                 if (tokenMatcher.group(1) == 'CTX.') {
                     System.debug(LoggingLevel.FINE,'replaceTokens: replacing context field ' + tokenMatcher.group(2));
-                    Map<String,String> contextMap = (Map<String,String>) context;
+                    Map<String,Object> contextMap = (Map<String,Object>) context;
                     String tokenValue = (String) contextMap?.get(tokenMatcher.group(2));
                     System.debug(LoggingLevel.FINE,'replaceTokens: token value fetched ' + tokenValue);
                     result = result.replace(tokenMatcher.group(0), tokenValue);
@@ -113,7 +114,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
                     System.debug(LoggingLevel.FINE,'replaceTokens: replacing row field ' + tokenMatcher.group(2));
                     Set<String> tokenValues = new Set<String>();
                     for (Object iter : rows) {
-                        Map<String,String> iterMap = (Map<String,String>) iter;
+                        Map<String,Object> iterMap = (Map<String,Object>) iter;
                         String iterValue = (String) iterMap?.get(tokenMatcher.group(2));
                         tokenValues.add(iterValue);
                     }
@@ -248,13 +249,13 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
             System.debug(LoggingLevel.FINEST,'reworkResults: result fetched ' + iterResult);
             if (iterResult.isSuccess()) {
                 //resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success',null));
-                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success','OK delete'));
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,System.Label.sfpegMassActionStatusOK,System.Label.sfpegMassActionIconOK,'slds-text-color_success','OK delete'));
                 System.debug(LoggingLevel.FINEST,'reworkResults: success row added with Id ' + iter.Id);
             }
             else {
                 Database.Error[] iterErrors = iterResult.getErrors();
                 String iterMessage = (iterErrors[0]).getMessage();
-                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,false,'Failed','standard:incident','slds-text-color_error',iterMessage));
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,false,System.Label.sfpegMassActionStatusKO,System.Label.sfpegMassActionIconKO,'slds-text-color_error',iterMessage));
                 System.debug(LoggingLevel.FINEST,'reworkResults: failed row added with error ' + iterMessage);
             }
             index += 1;

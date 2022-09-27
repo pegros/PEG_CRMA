@@ -36,6 +36,37 @@ import filterRows       from '@salesforce/apex/sfpegMassAction_CTL.filterRows';
 import executeAction    from '@salesforce/apex/sfpegMassAction_CTL.executeAction';
 import currentUserId    from '@salesforce/user/Id';
 
+import SORT_TITLE       from '@salesforce/label/c.sfpegMassActionSortTitle';
+import INIT_TITLE       from '@salesforce/label/c.sfpegMassActionInitTitle';
+import PROCESS_TITLE    from '@salesforce/label/c.sfpegMassActionProcessTitle';
+
+import UNDO_LABEL       from '@salesforce/label/c.sfpegMassActionUndoLabel';
+import CONFIRM_LABEL    from '@salesforce/label/c.sfpegMassActionConfirmLabel';
+import CANCEL_LABEL     from '@salesforce/label/c.sfpegMassActionCancelLabel';
+import CLOSE_LABEL      from '@salesforce/label/c.sfpegMassActionCloseLabel';
+
+import STEP_1_LABEL     from '@salesforce/label/c.sfpegMassActionStep1Label';
+import STEP_1_MSG       from '@salesforce/label/c.sfpegMassActionStep1Message';
+import STEP_2_LABEL     from '@salesforce/label/c.sfpegMassActionStep2Label';
+import STEP_2_NO_FORM_MSG   from '@salesforce/label/c.sfpegMassActionStep2NoFormMessage';
+import STEP_2_FORM_MSG      from '@salesforce/label/c.sfpegMassActionStep2FormMessage';
+import STEP_3_LABEL     from '@salesforce/label/c.sfpegMassActionStep3Label';
+import STEP_3_MSG       from '@salesforce/label/c.sfpegMassActionStep3Message';
+import STEP_4_LABEL     from '@salesforce/label/c.sfpegMassActionStep4Label';
+import STEP_4_MSG       from '@salesforce/label/c.sfpegMassActionStep4Message';
+import STEP_4_DETAILS   from '@salesforce/label/c.sfpegMassActionStep4Details';
+
+import FILTER_STATUS    from '@salesforce/label/c.sfpegMassActionStatusExcluded';
+import FILTER_ICON      from '@salesforce/label/c.sfpegMassActionIconExcluded';
+
+import INIT_ERROR       from '@salesforce/label/c.sfpegMassActionInitError';
+import PROCESS_ERROR    from '@salesforce/label/c.sfpegMassActionProcessError';
+import CONFIG_ERROR     from '@salesforce/label/c.sfpegMassActionConfigError';
+import FILTER_ALL_ERROR from '@salesforce/label/c.sfpegMassActionFilterAllError';
+import NO_SELECT_ERROR  from '@salesforce/label/c.sfpegMassActionNoSelectionError';
+import REQUIRED_FIELDS_ERROR  from '@salesforce/label/c.sfpegMassActionRequiredFieldsError';
+
+
 var MASS_ACTION_CONFIGS = {};
 
 export default class SfpegMassActionCmp extends LightningElement {
@@ -114,11 +145,11 @@ export default class SfpegMassActionCmp extends LightningElement {
 
     // Global Configuration
     @track configDetails;           // Action configuration retrieved / parsed from metadata
-    @track initError;               // Error message triggered upon component initialisation/refresh
+    @track initMessage;             // Error message triggered upon component initialisation/refresh
     @track context;                 // Component context
 
     // Header Actions Management
-    @track headerAction = {};           // Details bout the triggered header action
+    @track headerAction = {};           // Details about the triggered header action
     @track headerActionMessageTitle;    // Message triggered upon header action execution
     @track headerActionMessageDetail;   // Detailed message triggered upon header action execution
     @track headerActionMessageSeverity; // Header Action message severity (info, warning, error)
@@ -132,6 +163,20 @@ export default class SfpegMassActionCmp extends LightningElement {
     @track actionMessageSeverity;   // Action Message severity (info, warning, error)
     @track actionCountOK;           // Number of records processed OK at last execution
     @track actionCountKO;           // Number of records processed KO at last execution
+
+    // Custom Labels
+    sortTitle       = SORT_TITLE;
+    initTitle       = INIT_TITLE;
+    processTitle    = PROCESS_TITLE;
+    undoLabel       = UNDO_LABEL;
+    confirmLabel    = CONFIRM_LABEL;
+    cancelLabel     = CANCEL_LABEL;
+    closeLabel      = CLOSE_LABEL;
+    step1Label      = STEP_1_LABEL;
+    step2Label      = STEP_2_LABEL;
+    step3Label      = STEP_3_LABEL;
+    step4Label      = STEP_4_LABEL;
+    initError       = INIT_ERROR;
 
     //----------------------------------------------------------------
     // Custom Getters
@@ -176,12 +221,15 @@ export default class SfpegMassActionCmp extends LightningElement {
 
     // Main Action
     get actionStyle() {
-        return ((this.tableHeight && (this.results?.length > 0)) ?
-                "max-height:" + (this.tableHeight - 95) + "px !important; min-height:"
-                                + Math.round(this.tableHeight/2) +"px !important;": '');
+        return ((this.tableHeight && (this.results?.length > 0)) ? "height:" + (this.tableHeight - 125) + "px !important;" : "");
+        /*        "max-height:" + (this.tableHeight - 95) + "px !important; min-height:"
+                                + Math.round(this.tableHeight/2) +"px !important;": '');*/
     }
     get isStep2() {
         return (this.actionStep == 2);
+    }
+    get isProcessing() {
+        return (this.actionStep == 3) && (this.actionMessageSeverity != 'error');
     }
     get isProgressStep() {
         return ((this.actionStep == 1) || (this.actionStep == 3));
@@ -203,12 +251,12 @@ export default class SfpegMassActionCmp extends LightningElement {
     }
     get actionProgressMessage() {
         switch (this.actionStep){
-            case "1": return 'Analysing selected records';
-            case "2" : return 'Keeping ' + this.actionRows.length + ' rows on the selected ' + this.selection.length + ' ones. '
-                            + (this.configDetails.action.form ? 'Please fill in the following information before confirming the operation.' : 'Please confirm the operation.');
-            case "3" : return 'Processing records';
+            case "1": return STEP_1_MSG;
+            case "2" : return (this.configDetails.action.form ? STEP_2_FORM_MSG : STEP_2_NO_FORM_MSG).replace('{0}',this.selection.length).replace('{1}',this.actionRows.length);
+            case "3" : return STEP_3_MSG;
             default : return '';
         } 
+
     }
     get actionProgressTitle() {
         return this.actionProgress + '%';
@@ -225,21 +273,23 @@ export default class SfpegMassActionCmp extends LightningElement {
 
         if (!this.configName) {
             console.error('connected: Missing MassAction configuration name');
-            this.initError = 'Missing Configuration Name !';
+            this.initMessage = 'Missing Configuration Name !';
             this.isReady = true;
             return;
         }
 
         if (this.isDebug) console.log('connected: userId provided ', this.userId);
+        if (this.isDebug) console.log('connected: recordId provided ', this.recordId);
+        if (this.isDebug) console.log('connected: objectApiName provided ', this.objectApiName);
 
         if (this.isDebug) console.log('connected: config name fetched ', this.configName);
         if (MASS_ACTION_CONFIGS[this.configName]) {
             this.configDetails = MASS_ACTION_CONFIGS[this.configName];
             if (this.isDebug) console.log('connected: configuration already available ',JSON.stringify(this.configDetails));
-            
+
             this.initContext();
             if (this.isDebug) console.log('connected: context initialized');
-            
+
             this.isReady = true;
             if (this.isDebug) console.log('connected: END');
         }
@@ -287,13 +337,13 @@ export default class SfpegMassActionCmp extends LightningElement {
                 }
                 catch (parseError){
                     console.warn('connected: END KO / configuration parsing failed ', parseError);
-                    this.initError = 'Configuration parsing failed!';
+                    this.initMessage = 'Configuration parsing failed!';
                     this.isReady = true;
                 }
             })
             .catch( error => {
                 console.warn('connected: END KO / configuration fetch error ',error);
-                this.initError = 'Configuration fetch error: ' + error.body.message;
+                this.initMessage = error.body.message;
                 this.isReady = true;
             });
             if (this.isDebug) console.log('connected: configuration fetch request sent');
@@ -312,7 +362,9 @@ export default class SfpegMassActionCmp extends LightningElement {
             let headerContainer = this.template.querySelector('.headerContainer');
             if (this.isDebug) console.log('rendered: headerContainer ',headerContainer);
 
-            this.tableHeight = rootContainer.clientHeight - headerContainer.offsetHeight - 6;
+            this.tableHeight = rootContainer.clientHeight - headerContainer.offsetHeight - 8;
+            if (this.isDebug) console.log('rendered: rootContainer height ', rootContainer.clientHeight);
+            if (this.isDebug) console.log('rendered: headerContainer height ', headerContainer.offsetHeight);
             if (this.isDebug) console.log('rendered: tableHeight init ', this.tableHeight);
         }
         else {
@@ -340,12 +392,16 @@ export default class SfpegMassActionCmp extends LightningElement {
                     let iterSource = this.configDetails.context[iterField];
                     if (this.isDebug) console.log('wiredUser: with source ',iterSource);
 
-                    if (iterSource.fieldName?.startsWith('User.')) {
+                    if (iterSource.userField) {
+                        if (this.isDebug) console.log('wiredUser: fetching User field value ',iterSource.userField);
+                        this.context[iterField] = data.fields[iterSource.userField].value;
+                    }
+                    /*if (iterSource.fieldName?.startsWith('User.')) {
                         if (this.isDebug) console.log('wiredUser: fetching User field value ',iterSource.fieldName);
                         let fieldPath = iterSource.fieldName.split('.');
                         fieldPath.shift();
                         this.context[iterField] = data.fields[fieldPath.shift()].value;
-                    }
+                    }*/
                     else {
                         if (this.isDebug) console.log('wiredUser: ignoring context field');
                     }
@@ -373,6 +429,31 @@ export default class SfpegMassActionCmp extends LightningElement {
         if (data) {
             this.recordData = data;
             if (this.isDebug) console.log('wiredRecord: recordData fetched ',JSON.stringify(this.recordData));
+
+            if (this.configDetails?.context) {
+                if (this.isDebug) console.log('wiredRecord: updating context');
+
+                for (let iterField in this.configDetails.context) {
+                    if (this.isDebug) console.log('wiredRecord: processing context field ',iterField);
+                    let iterSource = this.configDetails.context[iterField];
+                    if (this.isDebug) console.log('wiredRecord: with source ',iterSource);
+
+                    if (iterSource.recordField) {
+                        if (this.isDebug) console.log('wiredRecord: fetching Record field value ',iterSource.recordField);
+                        this.context[iterField] = data.fields[iterSource.recordField].value;
+                    }
+                    /*if (iterSource.fieldName?.startsWith(this.objectApiName || "NONE")) {
+                        if (this.isDebug) console.log('wiredRecord: fetching Record field value ',iterSource.fieldName);
+                        let fieldPath = iterSource.fieldName.split('.');
+                        fieldPath.shift();
+                        this.context[iterField] = data.fields[fieldPath.shift()].value;
+                    }*/
+                    else {
+                        if (this.isDebug) console.log('wiredRecord: ignoring context field');
+                    }
+                }
+                if (this.isDebug) console.log('wiredUser: context updated ',JSON.stringify(this.context));
+            }
         }
         else if (error) {
             console.warn('wiredRecord: record data fetch error ',JSON.stringify(error));
@@ -454,6 +535,39 @@ export default class SfpegMassActionCmp extends LightningElement {
     }
 
     // Header Action Events
+    handleHeaderFormLoad(event){
+        if (this.isDebug) console.log('handleHeaderFormLoad: START for title  ',this.title);
+
+        if (this.headerAction.form.values) {
+            if (this.isDebug) console.log('handleHeaderFormLoad: initialising default values ', this.headerAction.form.values);
+            if (this.isDebug) console.log('handleHeaderFormLoad: current context fetched ', this.context);
+
+            for (let iterField in this.headerAction.form.values) {
+                if (this.isDebug) console.log('handleHeaderFormLoad: processing field ', iterField);
+                let iterSource = this.headerAction.form.values[iterField];
+                if (this.isDebug) console.log('handleHeaderFormLoad: mapped to ', iterSource);
+
+                let iterValue = this.context[iterSource];
+                if (this.isDebug) console.log('handleHeaderFormLoad: with value ', iterValue);
+
+                let inputField = this.template.querySelector("lightning-input-field[data-name='" + iterField + "']");
+                if (this.isDebug) console.log('initRowTemplate: updating inputField ', inputField);
+
+                if (inputField) inputField.value = iterValue;
+            }
+            if (this.isDebug) console.log('handleHeaderFormLoad: all default values initialised');
+        }
+        else {
+            if (this.isDebug) console.log('handleHeaderFormLoad: no default value to initialise');
+        }
+
+        let formSpinner = this.template.querySelector('.formSpinner');
+        if (this.isDebug) console.log('handleHeaderFormLoad: hiding formSpinner');
+        formSpinner?.classList?.add("slds-hide");
+
+        if (this.isDebug) console.log('handleHeaderFormLoad: END');
+    }
+
     handleHeaderAction(event) {
         if (this.isDebug) console.log('handleHeaderAction: START for title ',this.title);
         if (this.isDebug) console.log('handleHeaderAction: event ',event);
@@ -467,8 +581,8 @@ export default class SfpegMassActionCmp extends LightningElement {
 
         if ((this.selection?.length || 0) == 0) {
             console.warn('handleHeaderAction: no record selected');
-            this.headerActionMessageTitle = 'No selection';
-            this.headerActionMessageDetail = 'At least one row must be selected!';
+            this.headerActionMessageTitle = PROCESS_ERROR;
+            this.headerActionMessageDetail = NO_SELECT_ERROR;
             this.headerActionMessageSeverity = 'error';
         }
 
@@ -521,22 +635,22 @@ export default class SfpegMassActionCmp extends LightningElement {
         switch(this.headerAction?.type) {
             case 'reset' :
                 if (this.isDebug) console.log('handleHeaderConfirm: resetting selection');
-                this.resetSelection();
+                if (this.resetSelection()) this.handleHeaderCancel();
                 break;
             case 'update' :
                 if (this.isDebug) console.log('handleHeaderConfirm: updating selection');
-                this.updateSelection();
+                if (this.updateSelection()) this.handleHeaderCancel();
                 break;
             default :
                 console.warn('handleHeaderConfirm: END KO / unsupported action type');
-                this.headerActionMessageTitle = 'Configuration failure';
-                this.headerActionMessageDetail = 'Unknown action type: ' + this.headerAction?.type;
+                this.headerActionMessageTitle = CONFIG_ERROR;
+                this.headerActionMessageDetail = 'Unknown header action type: ' + this.headerAction?.type;
                 this.headerActionMessageSeverity = 'error';
                 return;
         }
 
         if (this.isDebug) console.log('handleHeaderConfirm: END');
-        this.handleHeaderCancel();
+        //this.handleHeaderCancel();
     }
 
     resetSelection() {
@@ -558,6 +672,7 @@ export default class SfpegMassActionCmp extends LightningElement {
         if (this.isDebug) console.log('resetSelection: refreshing data in dataTable ',dataTable);
         dataTable.data = this.tableData;
         if (this.isDebug) console.log('resetSelection: END');
+        return true;
     }
 
     updateSelection() {
@@ -567,10 +682,10 @@ export default class SfpegMassActionCmp extends LightningElement {
             if (this.isDebug) console.log('updateSelection: checking input form');
             if (!this.checkMissingFields('headerField')) {
                 console.warn('updateSelection: END KO / some required fields are missing');
-                this.headerActionMessageTitle = 'Submission failure';
-                this.headerActionMessageDetail = 'Some required fields must be filled!';
+                this.headerActionMessageTitle = PROCESS_ERROR;
+                this.headerActionMessageDetail = REQUIRED_FIELDS_ERROR;
                 this.headerActionMessageSeverity = 'warning';
-                return;
+                return false
             }
             else {
                 if (this.isDebug) console.log('updateSelection: input form checked OK');
@@ -598,6 +713,7 @@ export default class SfpegMassActionCmp extends LightningElement {
         dataTable.data = this.tableData;
 
         if (this.isDebug) console.log('updateSelection: END');
+        return true;
     }
 
     prepareUpdateTemplate() {
@@ -639,6 +755,39 @@ export default class SfpegMassActionCmp extends LightningElement {
     }
 
     // Main Action Events
+    handleMainFormLoad(event){
+        if (this.isDebug) console.log('handleMainFormLoad: START for title  ',this.title);
+
+        if (this.configDetails.action.form.values) {
+            if (this.isDebug) console.log('handleMainFormLoad: initialising default values ', this.configDetails.action.form.values);
+            if (this.isDebug) console.log('handleMainFormLoad: current context fetched ', this.context);
+
+            for (let iterField in this.configDetails.action.form.values) {
+                if (this.isDebug) console.log('handleMainFormLoad: processing field ', iterField);
+                let iterSource = this.configDetails.action.form.values[iterField];
+                if (this.isDebug) console.log('handleMainFormLoad: mapped to ', iterSource);
+
+                let iterValue = this.context[iterSource];
+                if (this.isDebug) console.log('handleMainFormLoad: with value ', iterValue);
+
+                let inputField = this.template.querySelector("lightning-input-field[data-name='" + iterField + "']");
+                if (this.isDebug) console.log('handleMainFormLoad: updating inputField ', inputField);
+
+                if (inputField) inputField.value = iterValue;
+            }
+            if (this.isDebug) console.log('handleMainFormLoad: all default values initialised');
+        }
+        else {
+            if (this.isDebug) console.log('handleMainFormLoad: no default value to initialise');
+        }
+
+        let formSpinner = this.template.querySelector('.formSpinner');
+        if (this.isDebug) console.log('handleMainFormLoad: hiding formSpinner');
+        formSpinner?.classList?.add("slds-hide");
+
+        if (this.isDebug) console.log('handleMainFormLoad: END');
+    }
+
     handleMainAction(event) {
         if (this.isDebug) console.log('handleMainAction: START for title  ',this.title);
 
@@ -652,8 +801,8 @@ export default class SfpegMassActionCmp extends LightningElement {
         if (this.isDebug) console.log('handleMainAction: action context reset');
 
         if (this.selection.length == 0) {
-            this.actionMessageTitle = 'Submission failure';
-            this.actionMessageDetail = 'No selection done !';
+            this.actionMessageTitle = PROCESS_ERROR;
+            this.actionMessageDetail = NO_SELECT_ERROR;
             this.actionMessageSeverity = 'error';
             this.actionRows = [];
             console.warn('handleMainAction: no record to process ');
@@ -668,7 +817,7 @@ export default class SfpegMassActionCmp extends LightningElement {
                     this.executeFilter([...this.selection]);
                 }
                 else {
-                    this.actionMessageTitle = 'Configuration failure';
+                    this.actionMessageTitle = CONFIG_ERROR;
                     this.actionMessageDetail = 'No filter template configured!';
                     this.actionMessageSeverity = 'error';
                     console.warn('handleMainAction: no filter template configured');
@@ -729,7 +878,7 @@ export default class SfpegMassActionCmp extends LightningElement {
 
         if (!this.configDetails.action.template.row) {
             console.warn('handleMainConfirm: END KO / row mapping missing in template configuration');
-            this.actionMessageTitle = 'Configuration failure';
+            this.actionMessageTitle = CONFIG_ERROR;
             this.actionMessageDetail = 'Missing row mapping in action template configuration!';
             this.actionMessageSeverity = 'error';
             return;
@@ -740,8 +889,8 @@ export default class SfpegMassActionCmp extends LightningElement {
             //if (missingList) {
             if (!this.checkMissingFields('mainField')) {
                 console.warn('handleMainConfirm: END KO / some required fields are missing');
-                this.actionMessageTitle = 'Submission failure';
-                this.actionMessageDetail = 'Some required fields must be filled!';
+                this.actionMessageTitle = PROCESS_ERROR;
+                this.actionMessageDetail = REQUIRED_FIELDS_ERROR;
                 this.actionMessageSeverity = 'warning';
                 return;
             }
@@ -759,37 +908,20 @@ export default class SfpegMassActionCmp extends LightningElement {
         let rowTemplate = this.initRowTemplate();
         if (this.isDebug) console.log('handleMainConfirm: row template initialized');
 
-        this.executeAction([...this.selection],rowTemplate);
+        this.executeAction([...this.actionRows],rowTemplate);
         if (this.isDebug) console.log('handleMainConfirm: END / operation launched');
     }
 
-    /*
-    handleFormLoad(event){
-        if (this.isDebug) console.log('handleFormLoad: START for title  ',this.title);
-        if (this.isDebug) console.log('handleFormLoad: END ', JSON.stringify(event.detail));
-    }
-    handleFormSubmit(event){
-        if (this.isDebug) console.log('handleFormSubmit: START for title  ',this.title);
-        if (this.isDebug) console.log('handleFormSubmit: END ', JSON.stringify(event.detail));
-    }
-    handleFormError(event){
-        if (this.isDebug) console.log('handleFormError: START for title  ',this.title);
-        if (this.isDebug) console.log('handleFormError: END with error ', JSON.stringify(event.detail));
-    }
-    handleFormSave(event){
-        if (this.isDebug) console.log('handleFormSave: START for title  ',this.title);
-        if (this.isDebug) console.log('handleFormSave: END ', JSON.stringify(event.detail));
-    }
-    */
+    
 
     //----------------------------------------------------------------
     // Utilities
     //----------------------------------------------------------------
 
     initConfig(jsonString) {
-        if (this.isDebug) console.log('initContext: START with ',jsonString);
+        if (this.isDebug) console.log('initConfig: START with ',jsonString);
         let jsonObject = (jsonString ? JSON.parse(jsonString) : null);
-        if (this.isDebug) console.log('initContext: END with ',jsonObject);
+        if (this.isDebug) console.log('initConfig: END with ',jsonObject);
         return jsonObject;
     }
 
@@ -813,24 +945,88 @@ export default class SfpegMassActionCmp extends LightningElement {
                                 if (this.isDebug) console.log('initContext: initializing userId automatic value');
                                 this.context[iterField] = this.userId;
                                 break;
-                            case 'today' :
+                            case 'recordId' : 
+                                if (this.isDebug) console.log('initContext: initializing recordId automatic value');
+                                this.context[iterField] = this.recordId;
+                                break;
+                            case 'objectApiName' : 
+                                if (this.isDebug) console.log('initContext: initializing objectApiName automatic value');
+                                this.context[iterField] = this.objectApiName;
+                                break;
+                            case 'now':
+                                if (this.isDebug) console.log('initContext: initializing now automatic value');
+                                this.context[iterField] = (new Date()).toISOString();
+                                break;
+                            case 'today':
                                 if (this.isDebug) console.log('initContext: initializing today automatic value');
-                                this.context[iterField] = new Date().toISOString().slice(0, 10);
+                                this.context[iterField] = (new Date()).toISOString().slice(0,10);
+                                break;
+                            case 'yesterday':
+                                if (this.isDebug) console.log('initContext: initializing yesterday automatic value');
+                                this.context[iterField] = (new Date(new Date().setDate(new Date().getDate() - 1))).toISOString().slice(0,10);
+                                break;
+                            case 'tomorrow':
+                                if (this.isDebug) console.log('initContext: initializing todayLocal automatic value');
+                                this.context[iterField] = (new Date(new Date().setDate(new Date().getDate() + 1))).toISOString().slice(0,10);
+                                break;
+                            case 'lastWeek':
+                                if (this.isDebug) console.log('initContext: initializing lastWeek automatic value');
+                                this.context[iterField] = (new Date(new Date().setDate(new Date().getDate() - 7))).toISOString().slice(0,10);
+                                break;
+                            case 'nextWeek':
+                                if (this.isDebug) console.log('initContext: initializing nextWeek automatic value');
+                                this.context[iterField] = (new Date(new Date().setDate(new Date().getDate() + 7))).toISOString().slice(0,10);
+                                break;
+                            case 'lastMonth':
+                                if (this.isDebug) console.log('initContext: initializing lastMonth automatic value');
+                                this.context[iterField] = (new Date(new Date().setMonth(new Date().getMonth() - 1))).toISOString().slice(0,10);
+                                break;
+                            case 'nextMonth':
+                                if (this.isDebug) console.log('initContext: initializing nextMonth automatic value');
+                                this.context[iterField] = (new Date(new Date().setMonth(new Date().getMonth() + 1))).toISOString().slice(0,10);
+                                break;
+                            case 'lastQuarter':
+                                if (this.isDebug) console.log('initContext: initializing lastQuarter automatic value');
+                                this.context[iterField] = (new Date(new Date().setMonth(new Date().getMonth() - 3))).toISOString().slice(0,10);
+                                break;
+                            case 'nextQuarter':
+                                if (this.isDebug) console.log('initContext: initializing nextQuarter automatic value');
+                                this.context[iterField] = (new Date(new Date().setMonth(new Date().getMonth() + 3))).toISOString().slice(0,10);
+                                break;
+                            case 'lastYear':
+                                if (this.isDebug) console.log('initContext: initializing lastYear automatic value');
+                                this.context[iterField] = (new Date(new Date().setMonth(new Date().getMonth() - 12))).toISOString().slice(0,10);
+                                break;
+                            case 'nextYear':
+                                if (this.isDebug) console.log('initContext: initializing nextYear automatic value');
+                                this.context[iterField] = (new Date(new Date().setMonth(new Date().getMonth() + 12))).toISOString().slice(0,10);
                                 break;
                             default:
                                 console.warn('initContext: unsupported automatic value source',iterSource.automatic);
                         }
                     }
-                    else if (iterSource.fieldName) {
+                    else if (iterSource.userField) {
+                        if (this.isDebug) console.log('initContext: registering User field to fetch ',iterSource.userField);
+                        if (!this.userFields) this.userFields = [];
+                        this.userFields.push('User.' + iterSource.userField);
+                    }
+                    else if (iterSource.recordField) {
+                        if (this.isDebug) console.log('initContext: registering User field to fetch ',iterSource.recordField);
+                        if (!this.recordFields) this.recordFields = [];
+                        this.recordFields.push(this.objectApiName + '.' + iterSource.recordField);
+                    }
+                    /*else if (iterSource.fieldName) {
                         if (iterSource.fieldName.startsWith('User.')) {
                             if (this.isDebug) console.log('initContext: registering User field to fetch ',iterSource.fieldName);
                             if (!this.userFields) this.userFields = [];
                             this.userFields.push(iterSource.fieldName);
                         }
                         else {
-                            console.warn('initContext: unsupported record value source',iterSource.fieldName);
+                            if (this.isDebug) console.log('initContext: registering Record field to fetch ',iterSource.fieldName);
+                            if (!this.recordFields) this.recordFields = [];
+                            this.recordFields.push(iterSource.fieldName);
                         }
-                    }
+                    }*/
                     else {
                         console.warn('initContext: unsupported value source',JSON.stringify(iterSource));
                     }
@@ -841,6 +1037,7 @@ export default class SfpegMassActionCmp extends LightningElement {
                 }
             }
             if (this.isDebug) console.log('initContext: userFields updated ', JSON.stringify(this.userFields));
+            if (this.isDebug) console.log('initContext: recordFields updated ', JSON.stringify(this.recordFields));
             if (this.isDebug) console.log('initContext: END with context ', JSON.stringify(this.context));
         }
         else {
@@ -924,8 +1121,8 @@ export default class SfpegMassActionCmp extends LightningElement {
                     this.actionStep = "2";
                     if (this.actionRows.length == 0) {
                         if (this.isDebug) console.log('executeFilter: END KO / no row to process after filtering');
-                        this.actionMessageTitle = 'Filtering Issue';
-                        this.actionMessageDetail = 'No selected record remaining to process after control!';
+                        this.actionMessageTitle = PROCESS_ERROR;
+                        this.actionMessageDetail = FILTER_ALL_ERROR;
                         this.actionMessageSeverity = 'error';
                     }
                     else {
@@ -936,7 +1133,7 @@ export default class SfpegMassActionCmp extends LightningElement {
             })
             .catch( error => {
                 console.warn('executeFilter: END KO / filter execution error ', error);
-                this.actionMessageTitle = 'Filtering failure';
+                this.actionMessageTitle = PROCESS_ERROR;
                 this.actionMessageDetail =  error.body.message;
                 this.actionMessageSeverity = 'error';
             });
@@ -947,8 +1144,8 @@ export default class SfpegMassActionCmp extends LightningElement {
             this.actionStep = "2";
             if (this.actionRows.length == 0) {
                 if (this.isDebug) console.log('executeFilter: END KO / no row to process after filtering');
-                this.actionMessageTitle = 'Filtering Issue';
-                this.actionMessageDetail = 'No selected record remaining to process after control!';
+                this.actionMessageTitle = PROCESS_ERROR;
+                this.actionMessageDetail = FILTER_ALL_ERROR;
                 this.actionMessageSeverity = 'error';
             }
             else {
@@ -997,7 +1194,21 @@ export default class SfpegMassActionCmp extends LightningElement {
                 }
                 else {
                     if (this.isDebug) console.log('removeRows: removing row ', sourceIndex);
+                    let sourceItem = filteredRows[sourceIndex];
                     filteredRows.splice(sourceIndex,1);
+
+                    let sourceItemIndex = this.tableData.findIndex(itemData => itemData[this.keyField] == sourceItem[this.keyField]);
+                    if (this.isDebug) console.log('removeRows: displayed row index fetched ',sourceItemIndex);
+
+                    let newSourceItem = {... this.tableData[sourceItemIndex]};
+                    newSourceItem._status = FILTER_STATUS;
+                    newSourceItem._icon = FILTER_ICON;
+                    newSourceItem._color = 'slds-text-color_error';
+                    newSourceItem._message = null;
+                    if (this.isDebug) console.log('removeRows: display row update prepared ',newSourceItem);
+
+                    this.tableData.splice(sourceItemIndex,1,newSourceItem);
+                    if (this.isDebug) console.log('removeRows: display row updated ');
                 }
             });
         }
@@ -1148,8 +1359,9 @@ export default class SfpegMassActionCmp extends LightningElement {
                 else {
                     if (this.isDebug) console.log('executeAction: END / All rows processed');
                     this.actionStep = "4";
-                    this.actionMessageTitle = 'All rows processed';
-                    this.actionMessageDetail = '#OK: ' + this.actionCountOK + ' / #KO: ' + this.actionCountKO ;
+                    this.actionMessageTitle = STEP_4_MSG;
+                    this.actionMessageDetail = STEP_4_DETAILS.replace('{0}',this.actionCountOK + this.actionCountKO).replace('{1}',this.actionCountOK).replace('{2}',this.actionCountKO);
+                    //this.actionMessageDetail = '#OK: ' + this.actionCountOK + '\n#KO: ' + this.actionCountKO ;
                     this.actionMessageSeverity = 'success';
                     //let dataTable = this.template.querySelector('lightning-datatable');
                     //dataTable.data = this.tableData;
@@ -1157,7 +1369,7 @@ export default class SfpegMassActionCmp extends LightningElement {
             })
             .catch( error => {
                 console.warn('executeAction: END KO / action execution error ',error);
-                this.actionMessageTitle = 'Processing failure';
+                this.actionMessageTitle = PROCESS_ERROR;
                 this.actionMessageDetail =  error.body.message;
                 this.actionMessageSeverity = 'error';
                 this.actionStep = "4";
@@ -1175,8 +1387,9 @@ export default class SfpegMassActionCmp extends LightningElement {
         else {
             if (this.isDebug) console.log('executeAction: END / no more rows to process');
             this.actionStep = "4";
-            this.actionMessageTitle = 'Processing done';
-            this.actionMessageDetail = 'All rows processed!';
+            this.actionMessageTitle = STEP_4_MSG;
+            this.actionMessageDetail = STEP_4_DETAILS.replace('{0}',this.actionCountOK + this.actionCountKO).replace('{1}',this.actionCountOK).replace('{2}',this.actionCountKO);
+            //this.actionMessageDetail = '#OK: ' + this.actionCountOK + '\n#KO: ' + this.actionCountKO ;
             this.actionMessageSeverity = 'success';
 
             //let dataTable = this.template.querySelector('lightning-datatable');
@@ -1209,5 +1422,9 @@ export default class SfpegMassActionCmp extends LightningElement {
 
         if (this.isDebug) console.log('prepareData: END');
         return targetRows;
+    }
+
+    handleChange(event) {
+        console.log('handleChange: event details ' + event.detail);
     }
 }

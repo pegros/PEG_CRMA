@@ -44,6 +44,10 @@ user remain in the Dashboard to execute a mass action on this result set.
 
 It leverages the standard  **[slds-datatable](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable)** Lightning base component to display the list of values and provide various unitary/mass update, subfilters... on a copy of the input query results to trigger Apex actions with the resulting list.
 
+![sfpegMassActionCmp in action](/media/sfpegMassAction.png)
+
+![sfpegMassActionCmp interaction](/media/sfpegMassActionPopup.png)
+
 Typical use case is to leverage a CRM Analytics Dashboard embedded within a Campaign Lightning record page to target Contacts to be added to it as CampaignMembers. This enables the user to remain within the Campaign page (no VF page redirection).
 
 Other use cases are mass reassignment of Accounts to new Owners (with possibly complex filters provided in the Dashboard), mass creation of callback or escalation tasks on Opportunities or Cases... possibly amending information on the selected records before executing the operation.
@@ -62,7 +66,8 @@ To be continued
 Packaging is done on a per-component basis, each component folder containing
 all the technical elements required to display and run it (custom labels, Apex classes...).
 
-To be continued
+Various custom labels are provided (prefixed with the name of the component) to adapt standard
+elements displayed at the UX.
 
 * * *
 

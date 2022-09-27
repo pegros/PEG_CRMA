@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>sfpegTestSoqlDml</label>
+    <protected>false</protected>
+    <values>
+        <field>ActionBatchSize__c</field>
+        <value xsi:type="xsd:double">0.0</value>
+    </values>
+    <values>
+        <field>ActionClass__c</field>
+        <value xsi:type="xsd:string">sfpegMassActionSoqlDml_SVC</value>
+    </values>
+    <values>
+        <field>ActionConfig__c</field>
+        <value xsi:type="xsd:string">insertBE</value>
+    </values>
+    <values>
+        <field>ActionForm__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>ActionLabel__c</field>
+        <value xsi:type="xsd:string">Execute</value>
+    </values>
+    <values>
+        <field>ActionMessage__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>ActionTemplate__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>ActionTitle__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">Test record to check OK filter and action cases</value>
+    </values>
+    <values>
+        <field>DisplayActions__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>DisplayConfig__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>DisplayContext__c</field>
+        <value xsi:type="xsd:string">{
+&quot;UserId&quot;:{&quot;automatic&quot;:&quot;userId&quot;},
+{&quot;RT&quot;:&quot;{{{RT.sfpegTestObject__c.sfpegRT1}}}&quot;},
+{&quot;Object&quot;:&quot;sfpegTestObject__c&quot;}
+}</value>
+    </values>
+    <values>
+        <field>FilterBatchSize__c</field>
+        <value xsi:type="xsd:double">0.0</value>
+    </values>
+    <values>
+        <field>FilterClass__c</field>
+        <value xsi:type="xsd:string">sfpegMassActionSoqlDml_SVC</value>
+    </values>
+    <values>
+        <field>FilterConfig__c</field>
+        <value xsi:type="xsd:string">select Id from {{{CTX.Object}}} where Id in ({{{ROW.Id}}})</value>
+    </values>
+    <values>
+        <field>FilterTemplate__c</field>
+        <value xsi:type="xsd:string">{
+&quot;source&quot;:&quot;Id&quot;,
+&quot;target&quot;:&quot;Id&quot;
+}</value>
+    </values>
+    <values>
+        <field>FilterToDo__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Permission__c</field>
+        <value xsi:nil="true"/>
+    </values>
+</CustomMetadata>

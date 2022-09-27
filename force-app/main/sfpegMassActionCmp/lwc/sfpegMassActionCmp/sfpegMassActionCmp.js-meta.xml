@@ -27,6 +27,10 @@
             <property   name="keyField"         type="Dimension"
                         label="Key Field"       description="Data Field used as Key record identifier"
                         required="true" />
+            <property   name="recordId"         type="String"
+                        label="Record ID"       description="Salesforce ID of the current page record" />
+            <property   name="objectApiName"    type="String"
+                        label="Object Name"     description="Object API Name of the current page record" />
             <property   name="isDebug"      type="Boolean"
                         label="Show Debug?" description="Flag to activate debug information"
                         default="false" />

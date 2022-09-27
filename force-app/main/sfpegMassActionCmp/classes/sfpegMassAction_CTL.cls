@@ -1,8 +1,10 @@
 /***
 * @description  Lightning controller to provide details about existing Mass Action configurations
-*               and actually execute mass actions.
+*               and actually execute mass actions. It leverages actual logic implementation provided
+*               by child classes of the sfpegMassAction_SVC virtual class.
 * @author       P-E GROS
 * @date         Sep 2022
+* @see sfpegMassAction_SVC
 * @see PEG_CRMA package (https://github.com/pegros/PEG_CRMA)
 *
 * Legal Notice
@@ -30,6 +32,7 @@
 * SOFTWARE.
 ***/
 
+@SuppressWarnings('PMD.ClassNamingConventions')
 public with sharing class sfpegMassAction_CTL {
 
     /***
@@ -52,13 +55,28 @@ public with sharing class sfpegMassAction_CTL {
 
         sfpegMassAction__mdt actionConfig;
         try {
-            actionConfig = [    SELECT  MasterLabel,
+            actionConfig = [    SELECT  MasterLabel, Permission__c,
                                         DisplayActions__c, DisplayConfig__c, DisplayContext__c,
                                         FilterToDo__c, FilterBatchSize__c, FilterTemplate__c,
                                         ActionLabel__c, ActionTitle__c, ActionMessage__c, ActionForm__c, ActionBatchSize__c, ActionTemplate__c
                                 FROM sfpegMassAction__mdt
                                 WHERE DeveloperName =  :actionName LIMIT 1];
+        }
+        catch (Exception e) {
+            System.debug(LoggingLevel.WARN,'getConfiguration: exception raised upon metadata fetch ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR,'getConfiguration: END - Missing/wrong configuration name ' + actionName);
+            throw new AuraHandledException('Mass Action configuration not found with name ' + actionName);
+        }
 
+        if (actionConfig.Permission__c != null){
+            if (!FeatureManagement.checkPermission(actionConfig.Permission__c)) {
+                System.debug(LoggingLevel.ERROR,'getConfiguration: END - user has not custom permission required, i.e. ' + actionConfig.Permission__c);
+                throw new AuraHandledException(String.format(System.Label.sfpegMassActionNoPermissionError, new List<Object>{actionConfig.Permission__c }));
+            }
+            System.debug(LoggingLevel.FINE,'getConfiguration: user has required custom permission, i.e. ' + actionConfig.Permission__c);
+        }
+
+        try {
             if ((actionConfig.DisplayActions__c != null) && (actionConfig.DisplayActions__c.contains('{{{RT.'))) {
                 System.debug(LoggingLevel.FINE,'getConfiguration: replacing RT tokens in Display Actions');
                 actionConfig.DisplayActions__c = replaceRTtokens(actionConfig.DisplayActions__c);
@@ -77,9 +95,9 @@ public with sharing class sfpegMassAction_CTL {
             }
         }
         catch (Exception e) {
-            System.debug(LoggingLevel.WARN,'getConfiguration: exception raised uponmetadata fetch ' + e.getMessage());
-            System.debug(LoggingLevel.ERROR,'getConfiguration: END - Missing/wrong configuration name ' + actionName);
-            throw new AuraHandledException('Mass Action configuration not found with name ' + actionName);
+            System.debug(LoggingLevel.WARN,'getConfiguration: exception raised upon metadata rework ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR,'getConfiguration: END - Wrong metadata for configuration ' + actionName);
+            throw new AuraHandledException('Invalid Mass Action configuration with name ' + actionName);
         }
 
         System.debug(LoggingLevel.FINE,'getConfiguration: END returning ' + actionConfig.MasterLabel);
@@ -98,16 +116,21 @@ public with sharing class sfpegMassAction_CTL {
     @AuraEnabled
     public static List<Object> filterRows(final String actionName, final List<Object> rows, final Object context) {
         System.debug(LoggingLevel.FINE,'filterRows: START with sfpegMassAction name ' + actionName);
-        System.debug(LoggingLevel.FINE,'filterRows: and #rows ' + rows.size());
+        System.debug(LoggingLevel.FINE,'filterRows: and #rows ' + rows?.size());
 
-        sfpegMassAction__mdt actionConfig = [   SELECT MasterLabel, FilterToDo__c, FilterClass__c, FilterConfig__c
-                                                FROM sfpegMassAction__mdt
-                                                WHERE DeveloperName =  :actionName LIMIT 1];
-        if (actionConfig == null) {
-            System.debug(LoggingLevel.ERROR,'filterRows: END - Missing/wrong configuration');
-            throw new AuraHandledException('Mass Action Configuration not found with name ' + actionName);
+        sfpegMassAction__mdt actionConfig;
+        try {
+            actionConfig = [    SELECT MasterLabel, FilterToDo__c, FilterClass__c, FilterConfig__c
+                                FROM sfpegMassAction__mdt
+                                WHERE DeveloperName =  :actionName LIMIT 1];
         }
-        else if (!actionConfig.FilterToDo__c) {
+        catch (Exception e) {
+            System.debug(LoggingLevel.WARN,'filterRows: exception raised upon metadata fetch ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR,'filterRows: END - Missing/wrong configuration name ' + actionName);
+            throw new AuraHandledException('Mass Action configuration not found with name ' + actionName);
+        }
+
+        if (!actionConfig.FilterToDo__c) {
             System.debug(LoggingLevel.ERROR,'filterRows: END - no filtering to do for action ' + actionName);
             throw new AuraHandledException('No filtering to do for action ' + actionName);
         }
@@ -137,14 +160,18 @@ public with sharing class sfpegMassAction_CTL {
     @AuraEnabled
     public static List<sfpegMassAction_SVC.ActionResult> executeAction(final String actionName, final List<SObject> rows, final Object context) {
         System.debug(LoggingLevel.FINE,'executeAction: START with sfpegMassAction name ' + actionName);
-        System.debug(LoggingLevel.FINE,'executeAction: and #rows ' + rows.size());
+        System.debug(LoggingLevel.FINE,'executeAction: and #rows ' + rows?.size());
 
-        sfpegMassAction__mdt actionConfig = [   SELECT ActionClass__c, ActionConfig__c
-                                                FROM sfpegMassAction__mdt
-                                                WHERE DeveloperName =  :actionName LIMIT 1];
-        if (actionConfig == null) {
-            System.debug(LoggingLevel.ERROR,'executeAction: END - Missing/wrong configuration');
-            throw new AuraHandledException('Mass Action Configuration not found with name ' + actionName);
+        sfpegMassAction__mdt actionConfig;
+        try {
+            actionConfig = [    SELECT MasterLabel, ActionClass__c, ActionConfig__c
+                                FROM sfpegMassAction__mdt
+                                WHERE DeveloperName =  :actionName LIMIT 1];
+        }
+        catch (Exception e) {
+            System.debug(LoggingLevel.WARN,'executeAction: exception raised upon metadata fetch ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR,'executeAction: END - Missing/wrong configuration name ' + actionName);
+            throw new AuraHandledException('Mass Action configuration not found with name ' + actionName);
         }
         System.debug(LoggingLevel.FINE,'executeAction: action configuration fetched ' + actionConfig);
 

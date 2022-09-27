@@ -33,6 +33,7 @@
 * SOFTWARE.
 ***/
 
+@SuppressWarnings('PMD.ClassNamingConventions')
 public virtual class sfpegMassAction_SVC {
 
     /***
