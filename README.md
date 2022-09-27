@@ -46,7 +46,7 @@ It leverages the standard  **[slds-datatable](https://developer.salesforce.com/d
 
 ![sfpegMassActionCmp in action](/media/sfpegMassAction.png)
 
-![sfpegMassActionCmp interaction](/media/sfpegMassActionPopup.png)
+![sfpegMassActionCmp interaction](/media/sfpegMassActionMainActionPopup.png)
 
 Typical use case is to leverage a CRM Analytics Dashboard embedded within a Campaign Lightning record page to target Contacts to be added to it as CampaignMembers. This enables the user to remain within the Campaign page (no VF page redirection).
 
