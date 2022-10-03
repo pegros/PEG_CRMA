@@ -45,7 +45,7 @@ export default class SfpegPlanningCmp extends LightningElement {
 
     //----------------------------------------------------------------
     // Configuration Parameters
-    //----------------------------------------------------------------  
+    //----------------------------------------------------------------
     @api title;             // Title of the component
     @api titleAlign;        // Title alignment option (left, center, center)
     @api titleSize;         // Title font size 
@@ -60,8 +60,8 @@ export default class SfpegPlanningCmp extends LightningElement {
     @api dsStart;           // Date/Time used as Element Start
     @api dsEnd;             // Date/Time used as Element End
 
-    @api minTS;             // Lower Date/Time display range
-    @api maxTS;             // Higher Date/Time display range
+    @api rangeStart;        // Lower Date/Time display range (optional)
+    @api rangeEnd;          // Higher Date/Time display range (optional)
 
     @api isDebug = false;   // Flag to activate debug information
     @api dummy;
@@ -109,8 +109,9 @@ export default class SfpegPlanningCmp extends LightningElement {
     axisData = [];          // Formatted Data for the Y-Axis
     chartData = [];         // Formatted Data for the Planning Chart
 
-    minTS;                  // Minimum TimeStamp of the displayed range
-    maxTS;                  // Maximum TimeStamp of the displayed range
+    minTS;                  // Lower Date/Time display range
+    maxTS;                  // Higher Date/Time display range
+
     d3DateTimeParse;        // D3 Datetime parser
     d3DateParse;            // D3 Date parser
     d3TimeScale             // D3 hozizontal time scale
@@ -331,22 +332,31 @@ export default class SfpegPlanningCmp extends LightningElement {
         if (this.isDebug) console.log('initPlanningRange: End field ', this.dsEnd);
 
         if (this._results.length == 0) {
-            if (this.isDebug) console.log('initPlanningRange: END / no data tp process'); 
+            if (this.isDebug) console.log('initPlanningRange: END / no data to process'); 
             return;
         }
 
         this.minTS = null;
         this.maxTS = null;
-        this._results.forEach(item => {
-            if ((!this.minTS) || (this.minTS > item[this.dsStart])) {
-                this.minTS = item[this.dsStart];
-            }
-            if ((!this.maxTS) || (this.maxTS < item[this.dsEnd])) {
-                this.maxTS = item[this.dsEnd];
-            }
-        });
-        if (this.isDebug) console.log('initPlanningRange: min TS extracted ', this.minTS);
-        if (this.isDebug) console.log('initPlanningRange: max TS extracted ', this.maxTS);
+        if (this.isDebug) console.log('initPlanningRange: Display Range Start ', this.rangeStart);
+        if (this.rangeStart) this.minTS = this.rangeStart;
+        if (this.isDebug) console.log('initPlanningRange: Display Range End ', this.rangeEnd);
+        if (this.rangeEnd) this.maxTS = this.rangeEnd;
+
+        if (!this.rangeStart || !this.rangeEnd) {
+            if (this.isDebug) console.log('initPlanningRange: Computing automatic display range ');
+
+            this._results.forEach(item => {
+                if ((!this.rangeStart) && ((!this.minTS) || (this.minTS > item[this.dsStart]))) {
+                    this.minTS = item[this.dsStart];
+                }
+                if ((!this.rangeEnd) && ((!this.maxTS) || (this.maxTS < item[this.dsEnd]))){
+                    this.maxTS = item[this.dsEnd];
+                }
+            });
+        }
+        if (this.isDebug) console.log('initPlanningRange: min TS determined ', this.minTS);
+        if (this.isDebug) console.log('initPlanningRange: max TS determined ', this.maxTS);
         if (!this.minTS) this.minTS = this.maxTS || new Date();
         if (!this.maxTS) this.maxTS = this.minTS || new Date();
         if (this.isDebug) console.log('initPlanningRange: min TS reworked ', this.minTS);

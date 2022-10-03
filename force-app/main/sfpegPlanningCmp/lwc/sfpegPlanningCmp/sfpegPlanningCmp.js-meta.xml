@@ -27,9 +27,9 @@
 
             <property   name="xAxisScale"       type="String"
                         label="X-Axis Scale"
-                        datasource="Auto,month,day,hour"
-                        description="Scale applied"
-                        default="Auto"/>
+                        datasource="auto,month,day,hour"
+                        description="Scale applied (not implemented yet)"
+                        default="auto"/>
             <property   name="yAxisSize"        type="Integer"
                         label="Y-Axis Size"
                         description="Size of the left section containing the group and element labels, as 1/N of the display width"
@@ -60,6 +60,11 @@
             <property   name="dsEnd"            type="Dimension"
                         label="End"             description="Date/Time used as Element End"
                         required="true" />
+
+            <property   name="rangeStart"       type="String"
+                        label="Range Start"     description="Min Date/Time of the range displayed" />
+            <property   name="rangeEnd"         type="String"
+                        label="Range End"       description="Max Date/Time of the range displayed" />
 
             <property   name="dummy"            type="String"
                         label="Space"           description="dummy workaround" />

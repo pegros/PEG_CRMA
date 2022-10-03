@@ -6,6 +6,16 @@
                     {title}
                     <!--<lightning-formatted-text value={title}>
                     </lightning-formatted-text>-->
+                    <a  if:true={isDebug}
+                        class="slds-m-left_x-small onlineHelp"
+                        href='https://github.com/pegros/PEG_CRMA/blob/master/help/sfpegPlanningCmp.md'
+                        target="_blank">
+                        <lightning-icon icon-name="utility:info"
+                                        variant="" size="xx-small"
+                                        alternative-text="Online Help" 
+                                        title="Click to access Online Help">
+                        </lightning-icon>
+                    </a>
                 </div>
             </div>
         </template>
