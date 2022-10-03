@@ -5,7 +5,18 @@
             <!-- Component Header -->
             <div class="slds-media slds-media_center headerMedia">
                 <div class="slds-media__body slds-p-left_small slds-p-vertical_xx-small">
-                    <p style={titleStyle}>{cmpTitle}</p>
+                    <p style={titleStyle}>{cmpTitle}
+                    <a  if:true={isDebug}
+                        class="slds-m-left_x-small onlineHelp"
+                        href='https://github.com/pegros/PEG_CRMA/blob/master/help/sfpegMassActionCmp.md'
+                        target="_blank">
+                        <lightning-icon icon-name="utility:info"
+                                        variant="" size="xx-small"
+                                        alternative-text="Online Help" 
+                                        title="Click to access Online Help">
+                        </lightning-icon>
+                    </a>
+                    </p>
                 </div>
                 <div if:true={isReady} class="slds-media__figure slds-media__figure_reverse slds-p-vertical_x-small" >
                     <template if:false={initMessage}>
