@@ -57,7 +57,7 @@
 
             <template if:false={initMessage}>
                 <!-- Component Table -->
-                <div class="tableContainer" style={tableStyle} >
+                <div if:true={tableHeight}  class="tableContainer"  style={tableStyle} >
                     <lightning-datatable    hide-checkbox-column={configDetails.display.options.hideCheckboxColumn}
                                             key-field={keyField}
                                             data={tableData}
