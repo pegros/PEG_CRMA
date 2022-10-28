@@ -19,7 +19,10 @@ production environments.
 
 ## Package Overview
 
-The package contains main set of LWC components is available for use in Lightning App Builder:
+The package contains a small set of LWC components usable directly in the CRM Analytics Studio to extend
+standard Dashboard capabilities (see **Components** of _Lightning Components_ type when editing a Dashboard).
+
+Please click on each component link to access more detailed information.
 
 ### **[sfpegPlanningCmp](/help/sfpegPlanningCmp.md)** Component
 
@@ -39,12 +42,15 @@ It leverages the latest `D3.js` library to automatically display the bars and ti
 
 ### **[sfpegMassActionCmp](/help/sfpegMassActionCmp.md)** Component
 
-This component displays an actionable list within a CRM Analytics Dashboard, letting the
+This component displays an actionable data table within a CRM Analytics Dashboard, letting the
 user remain in the Dashboard to execute a mass action on this result set.
 
 It leverages the standard  **[slds-datatable](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable)** Lightning base component to display the list of values and provide various unitary/mass update, subfilters... on a copy of the input query results to trigger Apex actions with the resulting list.
 
 ![sfpegMassActionCmp in action](/media/sfpegMassAction.png)
+
+When executing one of the proposed action, a form is presented to the user to ask for additional input and/or
+confirmation before executing it.
 
 ![sfpegMassActionCmp interaction](/media/sfpegMassActionMainActionPopup.png)
 
