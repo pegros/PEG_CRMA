@@ -107,10 +107,12 @@ public with sharing class sfpegMassAction_CTL {
     /***
     * @description  Method to filter the rows provided as input to the Mass Action component to keep only
     *               those actually eligible to the action.
+    *               It should return the rows to be removed from the input list by the
+    *               Mass Action component prior to executing the action.
     * @param        actionName      DeveloperName of the sfpegMassAction configuration record.
     * @param        rows            List of rows to be filtered.
     * @param        context         Display context data.
-    * @return       List<Object>    Filtered list of rows.
+    * @return       List<Object>    List of rows matching the filter.
     * @exception    AuraHandledException    Raised if no configuration found for the provided name.
     ***/
     @AuraEnabled

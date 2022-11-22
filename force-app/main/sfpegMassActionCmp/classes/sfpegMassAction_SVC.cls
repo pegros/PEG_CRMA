@@ -39,10 +39,12 @@ public virtual class sfpegMassAction_SVC {
     /***
     * @description  Method to provide an Apex row filtering logic implementation for the 
     *               sfpegMassAction_CTL generic controller class.
+    *               It should return the rows to be removed from the input list by the
+    *               Mass Action component prior to executing the action.
     * @param config         Filter configuration as provided by the applicable sfpegMassAction record.
     * @param rows           List of rows to be filtered.
     * @param context        Display context data provided by the component
-    * @return List<Object>  Resulting list of rows after having applied the filter
+    * @return List<Object>  List of rows matching the filter
     * @exception AuraHandledException   Returned systematically by default with a warning message
     *                                   to inform that real implementation is not available.
     ***/

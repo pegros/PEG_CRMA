@@ -45,7 +45,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
     * @param config         Filter configuration containing a SOQL query 
     * @param rows           List of rows to be filtered.
     * @param context        Display context data provided by the component
-    * @return List<Object>  Resulting list of rows after having applied the filter
+    * @return List<Object>  List of rows matching the filter
     * @exception AuraHandledException   Returned systematically by default with a warning message
     *                                   to inform that real implementation is not available.
     ***/
@@ -72,7 +72,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
     }
 
     /***
-    * @description          Private uutility method to replace tokens (e.g. "{{{CCC.yyyyy}}}") within a template.
+    * @description          Private utility method to replace tokens (e.g. "{{{CCC.yyyyy}}}") within a template.
     * @param template       String template containing tokens to be merged 
     * @param rows           List of rows to be used in {{{ROWS}}} or {{{ROW.xxx}}} tokens.
     * @param context        Context data to be used in  {{{CTX}}} or {{{CTX.xxx}}} tokens.
@@ -136,7 +136,9 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
     /***
     * @description          Overriden execute method implementing a simple DML based logic.
     * @param config         Action configuration as provided by the applicable sfpegMassAction record.
-    *                       It should correspond to one of the supported DML operations, i.e. 'insert', 'update' or 'delete'.
+    *                       It should correspond to one of the supported DML operations,
+    *                       i.e. 'insert', 'update' or 'delete' (in all-or-none mode)
+    *                       or 'insertBE', 'updateBE' or 'deleteBE' (in best-effort mode)
     * @param rows           List of rows to be acted upon.
     * @param context        Display context data provided by the component (ignored)
     * @return String        Execution summary to be possibly displayed within the component
