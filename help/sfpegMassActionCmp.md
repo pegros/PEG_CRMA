@@ -223,11 +223,12 @@ component.
     ]
 }
 ```
-`
 
+*
     * the `Action Label`,  `Action Title` and `Action Message` properties define the main action
     button label and the title and help message of the displayed action popup.
 
+*
     * the `Display Actions` define the set of _local_ actions to be provided in addition to the main one, as
     a stringified JSON list of action configuration objects, consisting in:
         * a `label` for button display and `name` for action unique identification
@@ -258,7 +259,7 @@ status to _updated_ value)
         "title":"Modify Subject",
         "status":"updated", "icon":"custom:custom18",   "color":"slds-text-color_success",
         "form":{    "objectApiName":"TaskProxy__c", "size":12,
-                    "fields": [{"name":"Name","required":true}]},
+                    "fields": [{"name":"Name","required":true}] },
         "template":{"form":{"Subject":"Name"}}}
 ]
 ```
