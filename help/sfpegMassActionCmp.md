@@ -200,7 +200,11 @@ are available.
     * the `Display Config` provides the configuration of the underlying
     **[lightning-datatable](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation)**
     component and consists in a stringified JSON configuration object (see standard documentation for details
-    about the `columns`property), e.g.
+    about the `columns`property)
+    
+As an example, the following configuration enables to select max 100 records in a datatable displaying
+5 columns with 4 fields from the rows provided by the Dashboard and 1 technical `_status` managed by the
+component.
 ```
 {
     "hideCheckboxColumn": false,
@@ -219,6 +223,7 @@ are available.
     ]
 }
 ```
+`
     * the `Action Label`,  `Action Title` and `Action Message` properties define the main action
     button label and the title and help message of the displayed action popup.
     * the `Display Actions` define the set of _local_ actions to be provided in addition to the main one, as
@@ -232,10 +237,13 @@ are available.
         (see main action section below for more details)
         * a `template`to define the set of fields to be set/updated on the selected rows as well as the
         origin of their values (see main action section below for more details)
-        * e.g. the folloing configuration defines 3 actions, the first resetting the selected records,
-        the second simply updating the technical status of the selected rows (to a fixed custom _excluded_ value),
-        the last updating the _Subject_ of selected records with the Name entered in a form (and updating the 
-        status to _updated_ value)
+
+
+The following configuration examples defines 3 actions, the first resetting the selected records,
+the second simply updating the technical status of the selected rows (to a fixed custom _excluded_ value),
+the last updating the _Subject_ of selected records with the Name entered in a form (and updating the 
+status to _updated_ value)
+
 ```
 [
     {   "label":"Reset",    "name":"reset", "type":"reset",
