@@ -49,20 +49,25 @@ When triggering the actual operation (brand color header button), a 4 step proce
 3. action execution (progressive in batches)
 4. action execution summary
 
-Typically, after having triggered the operation, the optional filtering happens and the step #2 popup
+
+Typically, after having triggered the operation, the (optional) filtering happens and the step #2 popup
 form gets displayed. 
+
 ![Action Confirmation Screen](/media/sfpegMassActionStep2.png)
 
 Once the user enters the required data and confirms the operation, the execution is launched and 
 a progress bar is displayed.
+
 ![Action Execution Screen](/media/sfpegMassActionStep3.png)
 
-Once all records have been processed a summary of the operation is presented, highlightning failures vs 
+Once all records have been processed a summary of the operation is presented, with details about failures vs 
 succcesses.
+
 ![Action Summary Screen](/media/sfpegMassActionStep4.png)
 
 After having closed the operation popup, the user gets back to the original list, with status information
 for each processed record.
+
 ![Main Action Screen with Status Display](/media/sfpegMassActionStep5.png)
 
 
