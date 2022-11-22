@@ -223,7 +223,7 @@ component.
     ]
 }
 ```
-`
+
     * the `Action Label`,  `Action Title` and `Action Message` properties define the main action
     button label and the title and help message of the displayed action popup.
     * the `Display Actions` define the set of _local_ actions to be provided in addition to the main one, as
