@@ -203,39 +203,41 @@ are available.
     about the `columns`property)
     
 As an example, the following configuration enables to select max 100 records in a datatable displaying
-5 columns with 4 fields from the rows provided by the Dashboard and 1 technical `\_status` managed by the
+5 columns with 4 fields from the rows provided by the Dashboard and 1 technical `_status` managed by the
 component.
 ```
 {
     "hideCheckboxColumn": false,
     "maxRowSelection": 100,
     "columns": [
-        {   "label":"Code postal",  "fieldName":"Code\_postal",  "sortable":true,
-            "cellAttributes": {"class":{"fieldName":"\_color"}}},
-        {   "label":"Département",  "fieldName":"Code\_departement", "sortable":true,
-            "cellAttributes": {"class":{"fieldName":"\_color"}}},
+        {   "label":"Code postal",  "fieldName":"Code_postal",  "sortable":true,
+            "cellAttributes": {"class":{"fieldName":"_color"}}},
+        {   "label":"Département",  "fieldName":"Code_departement", "sortable":true,
+            "cellAttributes": {"class":{"fieldName":"_color"}}},
         {   "label":"Nombre",   "fieldName":"count",    "type":"number",    "sortable":true},
-        {   "label":"Valeur foncière",  "fieldName":"sum\_Valeur\_fonciere",  "type":"number",    "sortable":true},
+        {   "label":"Valeur foncière",  "fieldName":"sum_Valeur_fonciere",  "type":"number",    "sortable":true},
         {   "fieldName":"_status",  "type":"text",  "sortable":true,
-            "cellAttributes": { "iconName":{"fieldName":"\_icon"},"iconPosition": "right",
-                                "title":{"fieldName":"\_message"}},
+            "cellAttributes": { "iconName":{"fieldName":"_icon"},"iconPosition": "right",
+                                "title":{"fieldName":"_message"}},
             "initialWidth": 100,"iconName": "utility:stage","hideLabel": true}
     ]
 }
 ```
+`
 
     * the `Action Label`,  `Action Title` and `Action Message` properties define the main action
     button label and the title and help message of the displayed action popup.
+
     * the `Display Actions` define the set of _local_ actions to be provided in addition to the main one, as
     a stringified JSON list of action configuration objects, consisting in:
         * a `label` for button display and `name` for action unique identification
         * a `title` and `message` for the action popup header title and main message
-        * a `type`, i.e. `update` for field updates on the selected rows or `reset`to reset the selected
+        * a `type`, i.e. `update` for field updates on the selected rows or `reset` to reset the selected
         rows to their orginal states
         * `status`, `icon` and `color` (optional) properties to update the corresponding technical fields
         * a `form` to define the content of the action popup form in terms of fields proposed for user input
         (see main action section below for more details)
-        * a `template`to define the set of fields to be set/updated on the selected rows as well as the
+        * a `template` to define the set of fields to be set/updated on the selected rows as well as the
         origin of their values (see main action section below for more details)
 
 
@@ -255,7 +257,7 @@ status to _updated_ value)
     {   "label":"Change Subject", "name":"changeSubject",   "type":"update",
         "title":"Modify Subject",
         "status":"updated", "icon":"custom:custom18",   "color":"slds-text-color_success",
-        "form":{    "objectApiName":"TaskProxy\_\_c", "size":12,
+        "form":{    "objectApiName":"TaskProxy__c", "size":12,
                     "fields": [{"name":"Name","required":true}]},
         "template":{"form":{"Subject":"Name"}}}
 ]
