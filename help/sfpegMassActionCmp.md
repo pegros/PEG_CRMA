@@ -27,7 +27,7 @@ Other use cases are mass reassignment of Accounts to new Owners (with possibly c
 ---
 ## Component Overview
 
-### Main Action Processing
+### Main Action Processing {#MainAction}
 
 A typical use case is to start from a main Dashboard enabling to filter various Salesforce core data and
 display important related KPIs.
@@ -73,7 +73,7 @@ for each processed record.
 ![Main Action Screen with Status Display](/media/sfpegMassActionStep5.png)
 
 
-### Display (local) Action Processing
+### Display (local) Action Processing {#LocalAction}
 
 Before actually launching the operation, it is possible to rework somehow the records presented in the 
 main data table via additional local header buttons (displayed in neutral instead of brand variant).
@@ -98,7 +98,7 @@ and due date of Tasks to create) is primarily used and the row status gets furth
 ![Main Action Screen with Main Action Status](/media/sfpegMassActionLocalStep5.png)
 
 
-### Component Access Control
+### Component Access Control {#AccessControl}
 
 The access to the component in the Dashboard may be simply controlled via **Custom Permissions**.
 
@@ -120,7 +120,7 @@ based controls and DML (insert / update / delete) operations. If needed, custom 
 may be added in Apex (by implementing the **sfpegMassAction_SVC** virtual class interface) and used in
 this configuration.
 
-### **Analytics Studio** Configuration
+### **Analytics Studio** Configuration {#StudioConfig}
 
 After having selected the **SFPEG Mass Action** component in the Dashboard editor, 
 the underlying Query needs to be configured first. It is possible to come back
@@ -144,7 +144,7 @@ most detailed configuration.
 Other properties enable to:
 * set a title content and size 
 * provide contextual information about a specific record, e.g. leveraging
-dynamic bindings to provide the Object Name and record ID of a selected 
+dynamic bindings to provide the `Object Name` and `Record ID` of a selected 
 record elsewhere in the Dashboard or of the page record when embedding the
 Dashboard in a Lightning record page.
 * activate debug logs in the console
@@ -156,30 +156,44 @@ metadata records.
 
 ![sfpegMassActionCmp Metadata Configuration](/media/sfpegMassActionConfigMeta.png)
 
-This configuration consists in the following main areas:
-* **General** information, mainly providing naming and description of the record
-    * the `Permission` property enabling to control access to the metadata record
-    (i.e. only Users with the specified Custom Permission may access this record,
-    see **Component Access Control** above)
+This configuration consists into 5 the main areas:
+* **General** information
+* **[Context](#ContextConfig)** data
+* **[Display](#FilterConfig)** configuration
+* **[Filter](#FilterConfig)** setting (for main action)
+* **[Main Action](#ActionConfig)** definition
 
-* Component **context** data setting the elements required by the various actions
-(and filter) to contextualise the execution to the current user, date...
-    * the `Context` property mainly consists in a stringified JSON object with various
-    fields defining their value statically or dynamically
-    * when opting for a dynamic value, the value should be specified as a JSON object
-    in `{"origin":"source"}` global format.
-    * the origin may be the **current User**, in which case the source should be the API name
-    of the User field to be used (e.g. `{"userField":"Email"}`)
-    * the origin may be the **current record** if the **Object Name**  and **Record Id** properties 
-    have been set in the Analytics Studio configuration, in which case the source should be the API name
-    of the Object field to be used (e.g. `{"recordField":"Name"}`)
-    * the origin may be **automatic**, in which case the source should have one of the following values:
-        * `userId` to get the current User Id (e.g. `{"automatic":"userId}`)
-        * `objectApiName` or `recordId` to fetch the corresponding information from the current record
-        (if the Analytics Studio properties have been set, see above)
-        * `now` to fetch the current timestamp
-        * `today`, `tomorrow`, `yesterday`, `nextWeek`, `lastWeek`, `nextMonth`, `lastMonth`, `nextQuarter`,
-        `lastQuarter`, `nextYear`, `lastYear` to fetch date values relative to the current day
+#### General Information
+
+This section mainly provides mainly naming and description of the **sfpefMassAction** custom metadata record.
+
+It also includes the optional `Permission` property enabling to control user access to the metadata record.
+If set, only Users with the specified Custom Permission may access the record, enabling to enforce
+**[Component Access Control](#AccessControl)** in the Dashboard.
+
+####  Component Context {#ContextConfig}
+
+This section defines the information required by the various actions (and optional filter) to
+contextualise the execution to the current user, date...
+
+A single (optional) `Context` property is provided, which, when set, should contain a stringified
+JSON object defining
+* the names of the different context properties to be used
+* their values in a static or dynamic way
+
+When opting for dynamic values, each property should be set as a JSON object in `{"origin":"source"}` global format.
+* the origin may be the **current User**, in which case the source should be the API name
+of the User field to be used (e.g. `{"userField":"Email"}`)
+* the origin may be the **current record** if the **Object Name**  and **Record Id** properties 
+have been set in the **[Analytics Studio](#StudioConfig)** configuration, in which case the source
+should be the API name of the Object field to be used (e.g. `{"recordField":"Name"}`)
+* the origin may be **automatic**, in which case the source should have one of the following values:
+    * `userId` to get the current User Id (e.g. `{"automatic":"userId}`)
+    * `objectApiName` or `recordId` to fetch the corresponding information from the current record
+    (if the Analytics Studio properties have been set, see above)
+    * `now` to fetch the current timestamp
+    * `today`, `tomorrow`, `yesterday`, `nextWeek`, `lastWeek`, `nextMonth`, `lastMonth`, `nextQuarter`,
+    `lastQuarter`, `nextYear`, `lastYear` to fetch date values relative to the current day
 
 As an example, the following context value would provide the current user ID, his name and email,
 the name of the current record, the date one week from today and a fixed "P2" task priority value.
@@ -194,13 +208,17 @@ the name of the current record, the date one week from today and a fixed "P2" ta
 }
 ```
 
-* Component **display** configuration, defining the way data provided by the Dashboard should be presented
-in the datatable, as well as how the main action should be displayed or which additional _local_ actions 
-are available.
-    * the `Display Config` provides the configuration of the underlying
-    **[lightning-datatable](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation)**
-    component and consists in a stringified JSON configuration object (see standard documentation for details
-    about the `columns`property)
+#### Component Display Configuration {#DisplayConfig}
+
+This section mainly defines the way data provided by the Dashboard should be presented in the datatable.
+It also sets how the main action should be displayed and configures which additional _[local]({#LocalAction})_
+actions may be available.
+
+
+The `Display Config` property provides the configuration of the underlying
+**[lightning-datatable](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation)**
+component and consists in a stringified JSON configuration object (see standard documentation for details
+especially about the `columns`property).
     
 As an example, the following configuration enables to select max 100 records in a datatable displaying
 5 columns with 4 fields from the rows provided by the Dashboard and 1 technical `_status` managed by the
@@ -224,27 +242,27 @@ component.
 }
 ```
 
-*
-    * the `Action Label`,  `Action Title` and `Action Message` properties define the main action
-    button label and the title and help message of the displayed action popup.
+The `Action Label`, `Action Title` and `Action Message` properties then enables to set the main action
+button label and define the title and help message of the displayed action popup.
 
-*
-    * the `Display Actions` define the set of _local_ actions to be provided in addition to the main one, as
-    a stringified JSON list of action configuration objects, consisting in:
-        * a `label` for button display and `name` for action unique identification
-        * a `title` and `message` for the action popup header title and main message
-        * a `type`, i.e. `update` for field updates on the selected rows or `reset` to reset the selected
-        rows to their orginal states
-        * `status`, `icon` and `color` (optional) properties to update the corresponding technical fields
-        * a `form` to define the content of the action popup form in terms of fields proposed for user input
-        (see main action section below for more details)
-        * a `template` to define the set of fields to be set/updated on the selected rows as well as the
-        origin of their values (see main action section below for more details)
+At last, the `Display Actions` property defines the set of _[local]({#LocalAction})_ actions to be provided
+in addition to the main one, as a stringified JSON list of action configuration objects, consisting in:
+    * a `label` for button display and `name` for action unique identification
+    * a `title` and `message` for the action popup header title and main message
+    * a `type`, i.e. `update` for field updates on the selected rows or `reset` to reset the selected
+    rows to their orginal states
+    * `status`, `icon` and `color` (optional) properties to update the corresponding technical fields
+    * a `form` to define the content of the action popup form in terms of fields proposed for user input
+    (see main action section below for more details)
+    * a `template` to define the set of fields to be set/updated on the selected rows as well as the
+    origin of their values (see main action section below for more details)
+For the last two properties, please refer to the [main action](#ActionConfig) section for details
+as configuration principles are identical.
 
-
-The following configuration examples defines 3 actions, the first resetting the selected records,
-the second simply updating the technical status of the selected rows (to a fixed custom _excluded_ value),
-the last updating the _Subject_ of selected records with the Name entered in a form (and updating the 
+The following configuration example defines 3 actions,
+* the first resetting the selected records,
+* the second simply updating the technical status of the selected rows (to a fixed custom _excluded_ value),
+* the last updating the _Subject_ of selected records with the Name entered in a form (and updating the 
 status to _updated_ value)
 
 ```
@@ -264,26 +282,24 @@ status to _updated_ value)
 ]
 ```
 
-* Component data **filtering** (for the main action)
+#### Data Filtering Setting {#FilterConfig}
+
+(for the main action)
+🚧 to be completed....
+
+
+#### Main Action Definition {#ActionConfig}
 
 🚧 to be completed....
 
 
-* Component **action** execution
-
-🚧 to be completed....
 
 
-### Row Status Properties
 
-When executing operations, various 
-_status
-_icon
-_color
-_message
+### Apex Logic Selection
 
 
-### Baseline Apex Logic
+#### Baseline Apex Logic
 
 As a baseline the **sfpegMassActionSoqlDml** Apex class is provided with the package
 to execute:
@@ -292,7 +308,7 @@ to execute:
 
 
 
-### Apex Logic Extension
+#### Apex Logic Extension
 
 It is however possible to replace this baseline logic by implementing any Apex
 class extending the virtual **sfpegMassAction_SVC** class. Two methods are 
@@ -302,8 +318,29 @@ The standard **sfpegMassActionSoqlDml** provides an example of such an implement
 
 🚧 to be completed....
 
+
 ***
 ## Technical Details
+### Row Status Properties
+
+When executing operations, various technical fields are automatically set on the rows by the component,
+which may then be displayed in the component (see **[Display](#DisplayConfig)** Configuration) to provide
+feedback to the user:
+* `_status` is a general status
+* `_icon` provides a [SLDS utility status icon](https://www.lightningdesignsystem.com/icons/) name corresponding to the status
+* `_color` provides a [SLDS text color class](https://www.lightningdesignsystem.com/utilities/text/) name corresponding to the status
+* `_message` provides additional information about the status (e.g. an error message)
+
+These technical fields may also be set via the _local_ actions (see **[Display Configuration]{#DisplayConfig}**)
+
+### Custom Labels
+
+Various custom labels are used by the component and may be modified / translated via standard Salesforce
+setup screens. All applicable labels are prefixed with ***sfpegMassAction***.
+
+⚠️ Beware not to override your configuration when deploying new versions of the component !
+
+### Technical Framework
 
 This component relies on the standard **[lightning-datatable](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation)** component for data display.
 All of the data display configuration of the **sfpegMassActionCmp** component directly depend on the capabilities
