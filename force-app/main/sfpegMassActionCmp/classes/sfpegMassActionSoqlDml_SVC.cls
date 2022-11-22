@@ -134,7 +134,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
     }
 
     /***
-    * @description          Overriden filter method implementing a simple SOQL based logic.
+    * @description          Overriden execute method implementing a simple DML based logic.
     * @param config         Action configuration as provided by the applicable sfpegMassAction record.
     *                       It should correspond to one of the supported DML operations, i.e. 'insert', 'update' or 'delete'.
     * @param rows           List of rows to be acted upon.

@@ -27,11 +27,13 @@ Other use cases are mass reassignment of Accounts to new Owners (with possibly c
 ---
 ## Component Overview
 
-### Typical Use Case
+### Main Action Processing
 
-A main Dashboard enables to filter various core data and display important related KPIs.
+A typical use case is to start from a main Dashboard enabling to filter various Salesforce core data and
+display important related KPIs.
 From this dashboard, various action buttons (here isolated on the top right) enable to access
 special Dashboard tabs hidden from the standard navigation.
+
 ![Navigation Entry](/media/sfpegMassActionEntry.png)
 
 When clicking on one action button (e.g. "Add to Campaign" / "Ajout Campagne"), an action dedicated tab is 
@@ -50,8 +52,8 @@ When triggering the actual operation (brand color header button), a 4 step proce
 4. action execution summary
 
 
-Typically, after having triggered the operation, the (optional) filtering happens and the step #2 popup
-form gets displayed. 
+Typically, after having selected rows and triggered the operation, the (optional) filtering happens
+and the step #2 popup form gets displayed. 
 
 ![Action Confirmation Screen](/media/sfpegMassActionStep2.png)
 
@@ -71,25 +73,42 @@ for each processed record.
 ![Main Action Screen with Status Display](/media/sfpegMassActionStep5.png)
 
 
-### Main Action Processing
-
-The component displays a main action to be applied on the Salesforce core database via an Apex action.
-
-There are actually two steps 
-An out of the box (default) Apex logic is provided in the  **sfpegMassActionSoqlDml_SVC** Apex class is available to execute standard SOQL
-
-🚧 to be completed...
-
 ### Display (local) Action Processing
 
+Before actually launching the operation, it is possible to rework somehow the records presented in the 
+main data table via additional local header buttons (displayed in neutral instead of brand variant).
+These modifications apply only locally on the data displayed in the component (i.e. not in Salesforce
+core database nor in CRM Analytics one) but will be used when executing the main operation.
+
+This enables to prepare data in a more targeted way than with the main action form (at step #2) and even 
+roll back to the original configuration.
+
+Typically, after having selected rows and triggered the local operation, a popup form gets displayed. 
+
+![Local Action Form Screen](/media/sfpegMassActionLocalStep2.png)
+
+Once the user enters the required data (here a Task subject and due date) and confirms the local
+operation, the records are updated and their status updated.
+
+![Main Action Screen with Local Action Status](/media/sfpegMassActionLocalStep3.png)
+
+Afterwards, when executing the main action, the updated information on the records (here the subject 
+and due date of Tasks to create) is primarily used and the row status gets further updated.
+
+![Main Action Screen with Main Action Status](/media/sfpegMassActionLocalStep5.png)
 
 
-🚧 to be completed...
+### Component Access Permission Control
 
+The access to the component in the Dashboard may be simply controlled via **Custom Permissions**.
+
+If a **Custom Permission** name is set in the Action configuration, any user not having it in their
+permissions will get an access error message.
+
+![Action Access Denied](/media/sfpegMassActionPermissionControl.png)
 
 
 ***
-
 ## Component Configuration
 
 Configuration of this component is done at two levels:
@@ -129,6 +148,7 @@ dynamic bindings to provide the Object Name and record ID of a selected
 record elsewhere in the Dashboard or of the page record when embedding the
 Dashboard in a Lightning record page.
 * activate debug logs in the console
+
 ### **Metadata** Configuration
 
 Most of the detailed configuration is done in **sfpegMassAction** custom
@@ -136,14 +156,26 @@ metadata records.
 
 ![sfpegMassActionCmp Metadata Configuration](/media/sfpegMassActionConfigMeta.png)
 
-🚧 to be completed....
+This configuration consists in the following main areas:
+* Component context data
+* Component Display configuration (and local actions)
+* Component Data filtering (for the main action)
+* Component Action execution
+
 ### Apex Logic Extension
 
-🚧 to be completed....
+As a baseline the **sfpegMassActionSoqlDml** Apex class is provided with the package
+to execute:
+* SOQL based filtering of rows to be processed
+* insert/update/delete DML operations in _all-or-none_ or _best effort_ modes
 
+It is however possible to replace this baseline logic by implementing any Apex
+class extending the virtual **sfpegMassAction_SVC** class. Two methods are 
+available respectively to **filterRows** and/or **executeAction**.
+
+The standard **sfpegMassActionSoqlDml** provides an example of such an implementation.
 
 ***
-
 ## Technical Details
 
 🚧 to be completed....
