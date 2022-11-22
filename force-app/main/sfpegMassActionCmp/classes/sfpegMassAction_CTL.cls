@@ -44,6 +44,8 @@ public with sharing class sfpegMassAction_CTL {
     * @description  Simple method to fetch UI configuration details for a Mass Action component.
     *               It provides the way how the data table should be displayed and what
     *               controls and actions should be executed.
+    *               This method automatically replaces RecordType merge tokens ('{{{RT.Object.Type}}}'
+    *               in the JSON configuration properties if needed)
     * @param        actionName  DeveloperName of the sfpegMassAction configuration record
     * @return       Object      sfpegMassAction__mdt record with DisplayConfig__c, ControlConfig__c,
     *                           ActionConfig__c and MasterLabel fields filled in.

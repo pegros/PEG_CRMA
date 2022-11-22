@@ -128,7 +128,7 @@ any time to the query via the standard query editor action (shown in red below).
 
 ![sfpegMassActionCmp Query Configuration](/media/sfpegMassActionConfig1.png)
 
-**Beware** to select at least one dimension uniquely identifying the rows to be
+**⚠️ Beware** to select at least one dimension uniquely identifying the rows to be
 displayed in the data table. Otherwise row selection will fail when using the
 component if duplicates are found !
 
@@ -284,27 +284,83 @@ status to _updated_ value)
 
 #### Data Filtering Setting
 
-(for the main action)
-🚧 to be completed....
+When executing the [main action](#main-action-processing), it is possible to first execute a filtering
+of the selected rows prior to the actual action execution. This enables to cope with the data synchronisation
+latency between CRM Analytics and Salesforce core platform and prevent users from creating multiple
+redundant records. Alternatively, a _best effort_ mode action execution may also cope with such issues
+(redundant records being rejected upon insert).
 
+A main `Filter?` boolean property enables to easily control the activation of this feature.
+
+When the feature is activated, the following properties must be defined:
+* `Filter Class` to define the Apex class implementing the filter logic
+    * default value being the **[sfpegMassActionSoqlDml](#default-apex-logic)** class provided
+    with the package and implementing a simple SOQL based logic
+* `Filter Batch Size` to execute the filtering in a progressive paginated way to cope with possible
+size limitations
+    * default value `0` meaning no pagination
+* `Filter Template` to define the mapping betweeen the row identification property on the selected rows
+and the identification field in the filter logic result set
+    * It is defined as a JSON Object with `source` and `target` properties identifying the 2 fields
+    * e.g. `{"source":"PersonContactId","target":"ContactId"}` to match Contact IDs between a
+    PersonAccount in a CRM Analytics dataset and a CampaignMember in Salesforce core database.
+* `Filter Config` to provide additional configuration information to the filter Apex class
+    * e.g. the SOQL query template to execute when using the **[sfpegMassActionSoqlDml](#default-apex-logic)**
+    class
 
 #### Main Action Definition
 
+This section defines the way the main action should be executed and relies on the following
+properties:
+* `Action Class` to define the Apex class implementing the action execution logic
+    * default value being the **[sfpegMassActionSoqlDml](#default-apex-logic)** class provided
+    with the package and implementing a simple DML based logic
+* `Action Batch Size` to execute the ection in a progressive paginated way to cope with possible
+size limitations
+    * default value `0` meaning no pagination
+* `Action Form` (optional) to configure an entry form to capture data from user to be applied
+to all selected records prior to action execution
+* `Action Template` to define the data to be actually sent as input to the Apex execution logic,
+as a JSON object definining how to merge information coming from one of the following sources
+    * `base` for a static base set of data to use  
+    * `form` for fields coming from the action form
+    * `context` for fields coming from the [component context](#component-context)
+    * `row` for dynamic fields coming from each processed row
+```
+{
+    "base":{
+        "sobjectType":"Task"
+    },
+    "form": {
+        "ActivityDate":"ActivityDate__c"
+    },
+    "row": {
+        "Subject": "CalculatedSubject"
+    },
+    "context": {
+        "OwnerId": "UserId",
+        "Status": "TaskOpenStatus",
+        "Priority": "TaskPriority"
+    }
+}
+```
+* `Action Config` to provide additional configuration information to the action Apex class
+    * e.g. the DML type (such as `insert` or `insertBE`) when using the **[sfpegMassActionSoqlDml](#default-apex-logic)**
+    class
+
 🚧 to be completed....
 
+### Apex Logic Implementation
 
+In both **[Data Filtering Setting](#data-filtering-setting)** and **[Main Action Definition](#main-action-definition)**
+properties of the **sfpegMassAction** custom metadata records, the names of the Apex classes implementing the logic
+to apply need to be explicitly provided.
 
+#### Default Apex Logic
 
-
-### Apex Logic Selection
-
-
-#### Baseline Apex Logic
-
-As a baseline the **sfpegMassActionSoqlDml** Apex class is provided with the package
-to execute:
+As a baseline the **sfpegMassActionSoqlDml** Apex class is provided with the package to support:
 * SOQL based filtering of rows to be processed
-* insert/update/delete DML operations in _all-or-none_ or _best effort_ modes
+* insert/update/delete DML operations with the selected rows (in _all-or-none_ or _best effort_ mode)
 
 🚧 to be completed....
 
@@ -327,18 +383,42 @@ When executing operations, various technical fields are automatically set on the
 which may then be displayed in the component (see **[Display](#display-configuration)** Configuration) to provide
 feedback to the user:
 * `_status` is a general status
-* `_icon` provides a [SLDS utility status icon](https://www.lightningdesignsystem.com/icons/) name corresponding to the status
+* `_icon` provides a [SLDS utility icon](https://www.lightningdesignsystem.com/icons/) name corresponding to the status
 * `_color` provides a [SLDS text color class](https://www.lightningdesignsystem.com/utilities/text/) name corresponding to the status
 * `_message` provides additional information about the status (e.g. an error message)
 
 These technical fields may also be set via the _local_ actions (see **[Display Configuration]{#display-configuration}**)
+
+### RecordType Handling
+
+In multiple complex JSON based configuration properties of the he **sfpegMassAction** custom metadata,
+record types may be referenced by ***tokens*** instead of hard coded IDs. These tokens are then 
+automatically replaced by their actual IDs when the component loads the applicable metadata record.
+
+The syntax to adopt is `{{{RT.ObjectApiName.RecordTypeDevName}}}` which may be used in the 
+`Context`, `Display Actions`, `Action Form` and `Action Template` properties.
+
+E.g. in the following `Action Form` property, in order to filter the set of picklist values
+according to a specific record type, the applicable record type ID may be specified as follows.
+```
+{
+    "message":"Please provide task details.",
+    "objectApiName":"TaskProxy__c",
+    "RecordTypeId":"{{{RT.TaskProxy__c.Commercial}}}",
+    "size":12,
+    "fields": [
+        {"name":"Reason__c","required":true},
+        {"name":"ActivityDate__c","required":true}
+    ]
+}
+```
 
 ### Custom Labels
 
 Various custom labels are used by the component and may be modified / translated via standard Salesforce
 setup screens. All applicable labels are prefixed with ***sfpegMassAction***.
 
-⚠️ Beware not to override your configuration when deploying new versions of the component !
+**⚠️ Beware** not to override your configuration when deploying new versions of the component !
 
 ### Technical Framework
 
