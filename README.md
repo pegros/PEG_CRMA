@@ -1,6 +1,5 @@
----
-# SFPEG CRMA Components
----
+
+# ![Logo](/media/logo.png) &nbsp; SFPEG CRMA Components
 
 
 ## Introduction

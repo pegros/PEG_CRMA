@@ -211,7 +211,7 @@ the name of the current record, the date one week from today and a fixed "P2" ta
 #### Display Configuration
 
 This section mainly defines the way data provided by the Dashboard should be presented in the datatable.
-It also sets how the main action should be displayed and configures which additional _[local]({#local-action-processing})_
+It also sets how the main action should be displayed and configures which additional _[local](#local-action-processing)_
 actions may be available.
 
 
@@ -245,7 +245,7 @@ component.
 The `Action Label`, `Action Title` and `Action Message` properties then enables to set the main action
 button label and define the title and help message of the displayed action popup.
 
-At last, the `Display Actions` property defines the set of _[local]({#local-action-processing})_ actions to be provided
+At last, the `Display Actions` property defines the set of _[local](#local-action-processing)_ actions to be provided
 in addition to the main one, as a stringified JSON list of action configuration objects, consisting in:
     * a `label` for button display and `name` for action unique identification
     * a `title` and `message` for the action popup header title and main message
@@ -387,7 +387,7 @@ feedback to the user:
 * `_color` provides a [SLDS text color class](https://www.lightningdesignsystem.com/utilities/text/) name corresponding to the status
 * `_message` provides additional information about the status (e.g. an error message)
 
-These technical fields may also be set via the _local_ actions (see **[Display Configuration]{#display-configuration}**)
+These technical fields may also be set via the _local_ actions (see **[Display Configuration](#display-configuration)**)
 
 ### RecordType Handling
 
