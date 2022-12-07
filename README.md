@@ -1,5 +1,5 @@
 
-# ![Logo](/media/logo.png) &nbsp; SFPEG CRMA Components
+# ![Logo](/media/Logo.png) &nbsp; SFPEG CRMA Components
 
 
 ## Introduction
