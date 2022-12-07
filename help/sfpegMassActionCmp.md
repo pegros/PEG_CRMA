@@ -1,6 +1,4 @@
----
-# SFPEG Mass Action Component
----
+# ![Logo](/media/Logo.png) &nbsp; SFPEG **Mass Action** Component
 
 ## Introduction
 

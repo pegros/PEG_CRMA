@@ -1,7 +1,4 @@
----
-# SFPEG Planning Component
----
-
+# ![Logo](/media/Logo.png) &nbsp; SFPEG **Planning** Component
 
 ## Introduction
 
