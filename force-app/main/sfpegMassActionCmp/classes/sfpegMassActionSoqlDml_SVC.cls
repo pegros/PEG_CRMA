@@ -105,7 +105,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
             else {
                 if (tokenMatcher.group(1) == 'CTX.') {
                     System.debug(LoggingLevel.FINE,'replaceTokens: replacing context field ' + tokenMatcher.group(2));
-                    Map<String,Object> contextMap = (Map<String,Object>) context;
+                    Map<Object,Object> contextMap = (Map<Object,Object>) context;
                     String tokenValue = (String) contextMap?.get(tokenMatcher.group(2));
                     System.debug(LoggingLevel.FINE,'replaceTokens: token value fetched ' + tokenValue);
                     result = result.replace(tokenMatcher.group(0), tokenValue);
@@ -114,7 +114,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
                     System.debug(LoggingLevel.FINE,'replaceTokens: replacing row field ' + tokenMatcher.group(2));
                     Set<String> tokenValues = new Set<String>();
                     for (Object iter : rows) {
-                        Map<String,Object> iterMap = (Map<String,Object>) iter;
+                        Map<Object,Object> iterMap = (Map<Object,Object>) iter;
                         String iterValue = (String) iterMap?.get(tokenMatcher.group(2));
                         tokenValues.add(iterValue);
                     }

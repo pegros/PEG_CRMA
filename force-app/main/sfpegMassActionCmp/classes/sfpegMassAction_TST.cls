@@ -195,15 +195,15 @@ public class  sfpegMassAction_TST {
 
         // Standard OK Case
         List<sfpegTestObject__c> testRows = new List<sfpegTestObject__c>();
-        map<String,Object> context = new Map<String,Object>{'Object' => 'sfpegTestObject__c'};
+        map<Object,Object> context = new Map<Object,Object>{'Object' => 'sfpegTestObject__c'};
         try {
             testRows.add(new sfpegTestObject__c(Name = 'TEST1'));
             testRows.add(new sfpegTestObject__c(Name = 'TEST2'));
             insert testRows;
             //List<sfpegTestObject__c> rows = [select Id from sfpegTestObject__c];
-            List<Map<String,Object>> rows = new List<Map<String,Object>>();
-            rows.add(new Map<String,Object>{'Name' => testRows[0].Name, 'Id' => testRows[0].Id});
-            rows.add(new Map<String,Object>{'Name' => testRows[1].Name, 'Id' => testRows[1].Id});
+            List<Map<Object,Object>> rows = new List<Map<Object,Object>>();
+            rows.add(new Map<Object,Object>{'Name' => testRows[0].Name, 'Id' => testRows[0].Id});
+            rows.add(new Map<Object,Object>{'Name' => testRows[1].Name, 'Id' => testRows[1].Id});
             sfpegMassAction_CTL.filterRows('sfpegTestSoqlDml',rows,context);
             System.debug('testFilterRows: TEST SUCCESS OK / no error raised for valid filter configuration');
             System.assert(true,'testFilterRows: no error raised for valid filter configuration');
