@@ -385,8 +385,7 @@ values of the selected records and the global `Context` parameters defined.
     ```
     select ContactId from CampaignMember where CampaignId = '{{{CTX.CampaignId}}}' and ContactId in ({{{ROWS}}})
     ```
-*   
-    * In any case, all filtered out rows are then tagged as `Excluded` in the component.
+* In any case, all filtered out rows are then tagged as `Excluded` in the component.
 
 
 For **operation**, the configuration consists in :
