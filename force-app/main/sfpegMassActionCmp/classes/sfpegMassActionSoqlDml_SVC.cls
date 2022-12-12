@@ -200,7 +200,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
     }
 
     /***
-    * @description          Private utility to rework insert results.
+    * @description          Private utility to rework insert or update results.
     * @param rows           List of rows to be acted upon.
     * @param results        List of insert/update operation results.
     * @return List<Object>  Execution summary to be returned to the component.
@@ -217,13 +217,13 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
             if (iterResult.isSuccess()) {
                 iter.Id = iterResult.getId();
                 //resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success',null));
-                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,'Processed','standard:approval','slds-text-color_success','OK insert/update'));
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,true,System.Label.sfpegMassActionStatusOK,'standard:approval','slds-text-color_success','OK insert/update'));
                 System.debug(LoggingLevel.FINEST,'reworkResults: success row added with Id ' + iter.Id);
             }
             else {
                 Database.Error[] iterErrors = iterResult.getErrors();
                 String iterMessage = (iterErrors[0]).getMessage();
-                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,false,'Failed','standard:incident','slds-text-color_error',iterMessage));
+                resultList.add(new sfpegMassAction_SVC.ActionResult(iter,false,System.Label.sfpegMassActionStatusKO,'standard:incident','slds-text-color_error',iterMessage));
                 System.debug(LoggingLevel.FINEST,'reworkResults: failed row added with error ' + iterMessage);
             }
             index += 1;
@@ -235,7 +235,7 @@ public with sharing class sfpegMassActionSoqlDml_SVC extends sfpegMassAction_SVC
     }
 
     /***
-    * @description          Private utility to rework insert results.
+    * @description          Private utility to rework delete results.
     * @param rows           List of rows to be acted upon.
     * @param results        List of delete operation results.
     * @return List<Object>  Execution summary to be returned to the component.
