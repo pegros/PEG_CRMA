@@ -17,9 +17,10 @@ Typical use case is to leverage a CRM Analytics Dashboard embedded within a Camp
 
 Other use cases are mass reassignment of Accounts to new Owners (with possibly complex filters provided in the Dashboard), mass creation of callback or escalation tasks on Opportunities or Cases... possibly amending information on the selected records before executing the operation.
 
-**⚠️ This component is still in early beta state**. It works but has not been used yet on production environments. It aims at completely replacing the component provided by the **[PEG_TCRM](https://github.com/pegros/PEG_TCRM)** package byproviding the following added value:
+**⚠️ This component is still in early beta state**. It works fine but has not been used yet on production environments.
+It aims at completely replacing the component provided by the **[PEG_TCRM](https://github.com/pegros/PEG_TCRM)** package by providing the following added value:
 * LWC instead of Aura implementation (better performances)
-* more native support of the CRM Analytics capabilities (data are produced by the Dashboard and injected into the component vs reverse engineering of teh current filter state to generate a SAQL query to re-fetch the data)
+* more native support of the CRM Analytics capabilities (data are produced by the Dashboard and injected into the component vs reverse engineering of the current filter state to generate a SAQL query to re-fetch the data)
 * native usage within CRM Analytices and not only for Dashboards embedded within Lightning pages.
 
 ---
@@ -106,7 +107,7 @@ permissions will get an access error message.
 ![Action Access Denied](/media/sfpegMassActionPermissionControl.png)
 
 
-***
+---
 ## Component Configuration
 
 Configuration of this component is done at two levels:
@@ -346,29 +347,96 @@ as a JSON object definining how to merge information coming from one of the foll
     * e.g. the DML type (such as `insert` or `insertBE`) when using the **[sfpegMassActionSoqlDml](#default-apex-logic)**
     class
 
-🚧 to be completed....
-
 ### Apex Logic Implementation
 
 In both **[Data Filtering Setting](#data-filtering-setting)** and **[Main Action Definition](#main-action-definition)**
 properties of the **sfpegMassAction** custom metadata records, the names of the Apex classes implementing the logic
-to apply need to be explicitly provided.
+to apply need to be explicitly provided. 
 
-#### Default Apex Logic
+These may be any Apex classes extending the **sfpegMassAction_SVC** virtual class and providing implementation 
+respectively for its `filterRows()` or `executeAction()` methods.
+
+#### Default Apex Logic (**sfpegMassActionSoqlDml**)
 
 As a baseline the **sfpegMassActionSoqlDml** Apex class is provided with the package to support:
-* SOQL based filtering of rows to be processed
-* insert/update/delete DML operations with the selected rows (in _all-or-none_ or _best effort_ mode)
+* **SOQL based filtering** of rows to be processed (to remove the selected rows that are present in the 
+results of a SOQL query)
+* **insert/update/delete DML operations** with the selected rows (in _all-or-none_ or _best effort_ mode)
 
-🚧 to be completed....
+For **filtering**, the configuration consists in :
+* activating the `Filter ?` boolean checkbox
+* keeping **sfpegMassActionSoqlDml** as `Filter Class`
+* fill in the `Filter Template` with a stringified JSON object containing
+    * the `source` field on the selected rows to be used as criteria in the query (e.g. the `PersonContactId`
+    of a list of ***Accounts***)
+    * the `target` field on the SOQL query results matching it (e.g. the `ContactId`of the set of of ***CampaignMembers***)
+    ```
+    {
+        "source": "PersonContactId",
+        "target": "ContactId"
+    }
+    ```
+* registering the SOQL query to execute in the `Filter Config` property, leveraging `{{{ROWS}}}`
+and ```{{{CTX.xxx}}}` tokens to contextualise the query respectively with the `source`field 
+values of the selected records and the global `Context` parameters defined (e.g. to remove the ***CampaignMembers***
+already defined on a given ***Campaign*** for the selected ***PersonAccounts***)
+```
+select ContactId from CampaignMember where CampaignId = '{{{CTX.CampaignId}}}' and ContactId in ({{{ROWS}}})
+```
+    * with `Context` set to `{"CampaignId":"recordId"}` and the `recordId` defined on the component configuration parameters
+in the Dashboard (e.g. leveraging dynamic bindings).
+    * In any case, all filtered out rows are then tagged as `Excluded` in the component.
+
+
+For **operation**, the configuration consists in :
+* keeping **sfpegMassActionSoqlDml** as `Action Class`
+* filling in the `Action Template` with the target Object record content for the DML operation, i.e. including
+at least a `sobjectType` property and any other field API Name of this Object (with a first capital letter), e.g.
+```
+{
+    "base":{
+        "sobjectType":"Task",
+        "RecordTypeId":"{{{RT.Task.ClientAssociateTask}}}"
+    },
+    "form": {
+        "ActivityDate":"ActivityDate__c",
+    },
+    "row": {
+        "WhoId":"PersonContactId"
+    },
+    "context": {
+        "OwnerId":"UserId",
+        "WhatId": "RecordId"
+    }
+}
+```
+* registering the DML operation to execute in the `Action Config` property
+    * `insert`, `update`, `delete` for the corresponding DML in _all-or-nothing_ mode (i.e. ending as soon as
+    there is an issue and executing a rollback on the row selection batch being processed)
+    * `insertBE`, `updateBE` or `deleteBE` for the same operations in _best-effort_ mode (i.e. iterating until
+    the end of the entire row selection, committing all possible changes)
+    * In any case, all processed rows are then tagged as `Processed`or `Failed` in the component.
 
 #### Apex Logic Extension
 
+These may be any Apex classes extending the **sfpegMassAction_SVC** virtual class and providing implementation 
+respectively for its `filterRows()` or `executeAction()` methods.
+
+The standard **sfpegMassActionSoqlDml** class provides a default implementation for the 
+record **filtering** and action **execution**.
+
 It is however possible to replace this baseline logic by implementing any Apex
-class extending the virtual **sfpegMassAction_SVC** class. Two methods are 
-available respectively to **filterRows** and/or **executeAction**.
+class extending the virtual **sfpegMassAction_SVC** class and providing actual
+logic for any of the two `filterRows()` or `executeAction()` available methods.
 
 The standard **sfpegMassActionSoqlDml** provides an example of such an implementation.
+
+in the **sfpegMassAction** custom metadata record, it is possible to register two distinct
+Apex classes respectively for the `Filter Class` and `Action Class` properties.
+It is therefore possible to still leverage the default **sfpegMassActionSoqlDml** implementation
+for only one of the two logics.
+
+## Configuration Examples
 
 🚧 to be completed....
 
