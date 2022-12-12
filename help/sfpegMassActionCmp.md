@@ -356,15 +356,14 @@ to apply need to be explicitly provided.
 These may be any Apex classes extending the **sfpegMassAction_SVC** virtual class and providing implementation 
 respectively for its `filterRows()` or `executeAction()` methods.
 
-#### Default Apex Logic (**sfpegMassActionSoqlDml**)
-
 As a baseline the **sfpegMassActionSoqlDml** Apex class is provided with the package to support:
 * **SOQL based filtering** of rows to be processed (to remove the selected rows that are present in the 
 results of a SOQL query)
 * insert/update/delete **DML operations** with the selected rows (in _all-or-none_ or _best effort_ mode)
 
+#### Default SOQL Filter Logic (**sfpegMassActionSoqlDml**)
 
-For **filtering**, the configuration consists in :
+For row filtering, the configuration consists in :
 * activating the `Filter ?` boolean checkbox
 * keeping **sfpegMassActionSoqlDml** as `Filter Class`
 * fill in the `Filter Template` with a stringified JSON object containing
@@ -388,7 +387,9 @@ values of the selected records and the global `Context` parameters defined.
 * In any case, all filtered out rows are then tagged as `Excluded` in the component.
 
 
-For **operation**, the configuration consists in :
+#### Default DML Action Logic (**sfpegMassActionSoqlDml**)
+
+For action execution, the configuration consists in :
 * keeping **sfpegMassActionSoqlDml** as `Action Class`
 * filling in the `Action Template` with the target Object record content for the DML operation, i.e. including
 at least a `sobjectType` property and any other field API Name of this Object (with a first capital letter), e.g.
@@ -441,7 +442,6 @@ for only one of the two logics.
 🚧 to be completed....
 
 
-***
 ## Technical Details
 ### Row Status Properties
 
