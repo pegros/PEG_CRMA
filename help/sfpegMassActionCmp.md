@@ -361,7 +361,8 @@ respectively for its `filterRows()` or `executeAction()` methods.
 As a baseline the **sfpegMassActionSoqlDml** Apex class is provided with the package to support:
 * **SOQL based filtering** of rows to be processed (to remove the selected rows that are present in the 
 results of a SOQL query)
-* **insert/update/delete DML operations** with the selected rows (in _all-or-none_ or _best effort_ mode)
+* insert/update/delete **DML operations** with the selected rows (in _all-or-none_ or _best effort_ mode)
+
 
 For **filtering**, the configuration consists in :
 * activating the `Filter ?` boolean checkbox
@@ -378,13 +379,13 @@ For **filtering**, the configuration consists in :
     ```
 * registering the SOQL query to execute in the `Filter Config` property, leveraging `{{{ROWS}}}`
 and ```{{{CTX.xxx}}}` tokens to contextualise the query respectively with the `source`field 
-values of the selected records and the global `Context` parameters defined (e.g. to remove the ***CampaignMembers***
-already defined on a given ***Campaign*** for the selected ***PersonAccounts***)
-```
-select ContactId from CampaignMember where CampaignId = '{{{CTX.CampaignId}}}' and ContactId in ({{{ROWS}}})
-```
-    * with `Context` set to `{"CampaignId":"recordId"}` and the `recordId` defined on the component configuration parameters
-in the Dashboard (e.g. leveraging dynamic bindings).
+values of the selected records and the global `Context` parameters defined.
+    * e.g. to remove the ***CampaignMembers*** already defined on a given ***Campaign*** for the selected ***PersonAccounts***,
+    with `Context` set to `{"CampaignId":"recordId"}` in the **sfpegMassAction** record and the `recordId` defined on the component configuration parameters in the Dashboard (e.g. leveraging dynamic bindings)
+    ```
+    select ContactId from CampaignMember where CampaignId = '{{{CTX.CampaignId}}}' and ContactId in ({{{ROWS}}})
+    ```
+*   
     * In any case, all filtered out rows are then tagged as `Excluded` in the component.
 
 
