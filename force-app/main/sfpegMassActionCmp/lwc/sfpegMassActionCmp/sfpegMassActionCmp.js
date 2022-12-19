@@ -1287,11 +1287,17 @@ export default class SfpegMassActionCmp extends LightningElement {
                 if (this.isDebug) console.log('initRowTemplate: mapped to ', iterSource);
 
                 let inputField = this.template.querySelector("lightning-input-field[data-name='" + iterSource + "']");
-                if (this.isDebug) console.log('initRowTemplate: inputField2 fetched ', inputField);
+                if (this.isDebug) console.log('initRowTemplate: inputField fetched ', inputField);
 
-                let iterValue = inputField.value;
+                let iterValue = inputField?.value;
                 if (this.isDebug) console.log('initRowTemplate: value extracted ', iterValue);
-                rowTemplate[iterField] = iterValue;
+                if (iterValue != null) {
+                    if (this.isDebug) console.log('initRowTemplate: value set');
+                    rowTemplate[iterField] = iterValue;
+                }
+                else {
+                    if (this.isDebug) console.log('initRowTemplate: ignoring null value');
+                }
             }
             if (this.isDebug) console.log('initRowTemplate: rowTemplate updated with form ', JSON.stringify(rowTemplate));
         }
