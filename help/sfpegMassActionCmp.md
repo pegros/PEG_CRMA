@@ -244,19 +244,21 @@ component.
 The `Action Label`, `Action Title` and `Action Message` properties then enables to set the main action
 button label and define the title and help message of the displayed action popup.
 
-At last, the `Display Actions` property defines the set of _[local](#local-action-processing)_ actions to be provided
-in addition to the main one, as a stringified JSON list of action configuration objects, consisting in:
-    * a `label` for button display and `name` for action unique identification
-    * a `title` and `message` for the action popup header title and main message
-    * a `type`, i.e. `update` for field updates on the selected rows or `reset` to reset the selected
-    rows to their orginal states
-    * `status`, `icon` and `color` (optional) properties to update the corresponding technical fields
-    * a `form` to define the content of the action popup form in terms of fields proposed for user input
-    (see main action section below for more details)
-    * a `template` to define the set of fields to be set/updated on the selected rows as well as the
-    origin of their values (see main action section below for more details)
+At last, the `Display Actions` property defines the set of _[local](#local-action-processing)_ actions
+to be provided in addition to the main one, as a stringified JSON list of action configuration objects, consisting in:
+* a `label` for button display and `name` for action unique identification
+* a `title` and `message` for the action popup header title and main message
+* a `type`, i.e. `update` for field updates on the selected rows or `reset` to reset the selected
+rows to their orginal states
+* `status`, `icon` and `color` (optional) properties to update the corresponding technical fields
+* a `form` to define the content of the action popup form in terms of fields proposed for user input
+(see main action section below for more details)
+* a `template` to define the set of fields to be set/updated on the selected rows as well as the
+origin of their values (see main action section below for more details)
+
 For the last two properties, please refer to the [main action](#main-action-definition) section for details
 as configuration principles are identical.
+
 
 The following configuration example defines 3 actions,
 * the first resetting the selected records,
