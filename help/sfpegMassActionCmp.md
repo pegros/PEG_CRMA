@@ -209,7 +209,8 @@ the name of the current record, the date one week from today and a fixed "P2" ta
 
 #### Display Configuration
 
-This section mainly defines the way data provided by the Dashboard should be presented in the datatable.
+This section mainly defines the way data provided by the Dashboard (via the input step)
+should be presented in the datatable.
 It also sets how the main action should be displayed and configures which additional _[local](#local-action-processing)_
 actions may be available.
 
@@ -220,7 +221,8 @@ component and consists in a stringified JSON configuration object (see standard 
 especially about the `columns`property).
     
 As an example, the following configuration enables to select max 100 records in a datatable displaying
-5 columns with 4 fields from the rows provided by the Dashboard and 1 technical `_status` managed by the
+5 columns with 4 fields from the rows provided by the Dashboard (`fieldName` matching the API Name of the
+field provided by the input step) and 1 technical `_status` managed by the
 component.
 ```
 {
