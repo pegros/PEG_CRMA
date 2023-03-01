@@ -322,7 +322,22 @@ properties:
 size limitations
     * default value `0` meaning no pagination
 * `Action Form` (optional) to configure an entry form to capture data from user to be applied
-to all selected records prior to action execution
+to all selected records prior to action execution (adopting a syntax close to the `form` 
+display actions presented earlier).
+```
+{
+    "message":"Please fill in this form.",
+    "objectApiName":"TaskProxy__c",
+    "RecordTypeId":"{{{RT.TaskProxy__c.Type_A}}}",
+    "size":12,
+    "fields": [
+        {"name":"Status__c","hidden":true,"value":"A faire"},
+        {"name":"ActivityDate__c","required":true},
+        {"name":"Domain__c","required":true},
+        {"name":"WhoId__c","required":true}
+    ]
+}
+```
 * `Action Template` to define the data to be actually sent as input to the Apex execution logic,
 as a JSON object definining how to merge information coming from one of the following sources
     * `base` for a static base set of data to use  
