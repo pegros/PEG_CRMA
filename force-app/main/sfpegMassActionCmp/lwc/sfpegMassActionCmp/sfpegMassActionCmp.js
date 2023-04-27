@@ -35,6 +35,8 @@ import getConfiguration from '@salesforce/apex/sfpegMassAction_CTL.getConfigurat
 import filterRows       from '@salesforce/apex/sfpegMassAction_CTL.filterRows';
 import executeAction    from '@salesforce/apex/sfpegMassAction_CTL.executeAction';
 import currentUserId    from '@salesforce/user/Id';
+import { notifyRecordUpdateAvailable } from 'lightning/uiRecordApi';
+
 
 import SORT_TITLE       from '@salesforce/label/c.sfpegMassActionSortTitle';
 import INIT_TITLE       from '@salesforce/label/c.sfpegMassActionInitTitle';
@@ -343,7 +345,7 @@ export default class SfpegMassActionCmp extends LightningElement {
             })
             .catch( error => {
                 console.warn('connected: END KO / configuration fetch error ',error);
-                this.initMessage = error.body.message;
+                this.initMessage = error.body?.message || JSON.stringify(error);
                 this.isReady = true;
             });
             if (this.isDebug) console.log('connected: configuration fetch request sent');
@@ -1134,7 +1136,7 @@ export default class SfpegMassActionCmp extends LightningElement {
             .catch( error => {
                 console.warn('executeFilter: END KO / filter execution error ', error);
                 this.actionMessageTitle = PROCESS_ERROR;
-                this.actionMessageDetail =  error.body.message;
+                this.actionMessageDetail =  error.body?.message || JSON.stringify(error);
                 this.actionMessageSeverity = 'error';
             });
             if (this.isDebug) console.log('executeFilter: batch action execution requested');
@@ -1363,7 +1365,7 @@ export default class SfpegMassActionCmp extends LightningElement {
                     this.executeAction(rows,rowTemplate);
                 }
                 else {
-                    if (this.isDebug) console.log('executeAction: END / All rows processed');
+                    if (this.isDebug) console.log('executeAction: All rows processed');
                     this.actionStep = "4";
                     this.actionMessageTitle = STEP_4_MSG;
                     this.actionMessageDetail = STEP_4_DETAILS.replace('{0}',this.actionCountOK + this.actionCountKO).replace('{1}',this.actionCountOK).replace('{2}',this.actionCountKO);
@@ -1371,12 +1373,17 @@ export default class SfpegMassActionCmp extends LightningElement {
                     this.actionMessageSeverity = 'success';
                     //let dataTable = this.template.querySelector('lightning-datatable');
                     //dataTable.data = this.tableData;
+                    if (this.recordId) {
+                        if (this.isDebug) console.log('executeAction: refreshing record ',this.recordId);
+                        notifyRecordUpdateAvailable([{recordId: this.recordId}]);
+                    }
+                    if (this.isDebug) console.log('executeAction: END');
                 }
             })
             .catch( error => {
                 console.warn('executeAction: END KO / action execution error ',error);
                 this.actionMessageTitle = PROCESS_ERROR;
-                this.actionMessageDetail =  error.body.message;
+                this.actionMessageDetail =  error.body?.message || JSON.stringify(error);
                 this.actionMessageSeverity = 'error';
                 this.actionStep = "4";
                 /*batchRows.forEach(item => {
